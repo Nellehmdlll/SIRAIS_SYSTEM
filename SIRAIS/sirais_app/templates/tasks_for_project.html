@@ -1,0 +1,17 @@
+
+{%extends ' index.html '%}
+
+{%block content%}
+
+
+<h2>Mes Tâches</h2>
+<ul>
+  {% for task in user.assigned_tasks.all %}
+    <li>{{ task.name }} - {{ task.status }}</li>
+  {% empty %}
+    <li>Aucune tâche trouvée.</li>
+  {% endfor %}
+</ul>
+
+
+{%endblock %}

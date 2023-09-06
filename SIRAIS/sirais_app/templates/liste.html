@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="dashboard-content">
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"> </i>
+          LISTE
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>NOM</th>
+                        <th>Adresse mail</th>
+                       
+                        <th>Expertise</th>
+                        <th>Numero de telephone</th>
+                        
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for item in liste %}
+                    
+                   
+                    <tr>
+                        <td>{{ item.username }} </td>
+                        <td>{{ item.email }}</td>
+                       
+                        <td>{{ item.expertise }}</td>
+                        <td>{{ item.phone_number }}</td>
+                       
+                    </tr>
+                    {% empty %}
+
+                    <tr>
+                        <td>Aucun porteur de projet trouvé.</td>
+                        <td>Aucun porteur de projet trouvé.</td>
+                        <td>Aucun porteur de projet trouvé.</td>
+                        <td>Aucun porteur de projet trouvé.</td>
+                        
+                    </tr>
+                    {% endfor %}
+                  
+                        
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+   
+</div>
+{% endblock %}

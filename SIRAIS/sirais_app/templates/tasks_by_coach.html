@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<h2>Tâches attribuées par moi</h2>
+<ul>
+  {% for task in user.assigned_tasks_coach.all %}
+    <li>{{ task.name }} - {{ task.status }}</li>
+  {% empty %}
+    <li>Aucune tâche trouvée.</li>
+  {% endfor %}
+</ul>
+
+{%endblock %}

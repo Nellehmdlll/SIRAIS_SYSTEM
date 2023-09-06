@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div id="calendar">
+
+<a href="#">Créer un événement</a>
+<!-- calendar_template.html -->
+
+<iframe src="https://calendar.google.com/calendar/embed?src={{ id }}&ctz=Europe%2FParis" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h2 class="mt-4">Ressources </h2>
+    <div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
+      <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+    
+     
+    </div>
+    <div class="d-flex justify-content-between mb-4">
+        <a href="{% url 'add_resource' phase=phase project_id=project_id %}" class="btn btn-warning">Ajouter une ressource au projet</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i> Liste des ressources en attente de validation
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resource in pending_resources %}
+                    <tr>
+                        <td>{{ resource.title }}</td>
+                        <td>{{ resource.get_type_display }}</td>
+                        <td>
+                          <a href="{% url 'validate_resource' resource.id %}?action=reject" class="btn btn-outline-info btn-sm">Voir</a>
+                          <a href="{% url 'validate_resource' resource.id %}?action=validate" class="btn btn-outline-success btn-sm">Commenter </a>
+
+                            <a href="{% url 'validate_resource' resource.id %}?action=validate" class="btn btn-outline-success btn-sm">Valider</a>
+                            <a href="{% url 'validate_resource' resource.id  %}?action=reject" class="btn btn-outline-danger btn-sm">Rejeter</a>
+                           
+                          </td>
+
+                    </tr>
+                    {% endfor %}
+
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

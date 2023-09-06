@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+<div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
+    <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
+      <i class="fas fa-arrow-left"></i> Retour
+  </a>
+  
+  <a href=" {% url 'create_task' %} " class="btn btn-success">  <i class="bi bi-plus"></i>  Ajouter une tàche</a>
+ 
+  </div>
+  <h2>Tâches du projet</h2>
+<ul>
+  {% for task in project.tasks.all %}
+    <li>{{ task.name }} - {{ task.status }}</li>
+  {% empty %}
+    <li>Aucune tâche trouvée.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

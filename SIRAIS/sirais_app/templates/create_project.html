@@ -1,0 +1,54 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <main class="content-wrap">
+    
+    <div class="card mb-4">
+      <div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
+        <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
+          <i class="fas fa-arrow-left"></i> Retour
+      </a>
+      
+       
+      </div>
+      <h2>Créer un nouveau projet</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="col-md-3 mb-3">
+          <label for="{{ form.name.id_for_label }}">Name</label>
+          {{ form.name }}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="{{ form.start_date.id_for_label }}">Date de debut</label>
+          {{ form.start_date }}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="{{ form.end_date.id_for_label }}">Date de fin</label>
+          {{ form.end_date }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-3 mb-3">
+          <label for="{{ form.porteur_de_projet.id_for_label }}">Porteur de Projet</label>
+          {{ form.porteur_de_projet}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="{{ form.coach.id_for_label }}">Coach</label>
+          {{ form.coach }}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="{{ form.project_state.id_for_label }}">ETAT DU PROJET</label>
+          {{ form.project_state }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="{{ form.desc.id_for_label }}" id="id_desc">Description</label>
+        {{ form.desc }}
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Creer un nouveau projet</button>
+    </form>
+  </main>
+  
+{% endblock %}
