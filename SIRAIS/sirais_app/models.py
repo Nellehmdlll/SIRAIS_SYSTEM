@@ -1,50 +1,121 @@
+from django import apps
 from django.db import models
 from django.utils import timezone
 from django.db.models import Q
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager, AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.contrib.auth.models import PermissionsMixin
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        """
+        Crée et enregistre un utilisateur avec l'e-mail et le mot de passe donnés.
+        """
+        if not username:
+            raise ValueError('Les utilisateurs doivent avoir un username')
+
+        """ GlobalUserModel = apps.get_model(
+            self.model._meta.app_label, self.model._meta.object_name
+        ) """
+        #user = GlobalUserModel.normalize_username(username)
+        user = self.model(username=username,  **extra_fields)
+
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
+
+
+    def create_staffuser(self, username, password):
+        """
+        Crée et enregistre un utilisateur du staff avec l'e-mail et le mot de passe donnés.
+        """
+        user = self.create_user(
+        username,
+        password=password,
+        )
+        user.staff = True
+        user.save(using=self._db)
+        return user
+
+
+
+
+    def create_superuser(self, username, password):
+        """
+        Crée et enregistre un superutilisateur avec l'e-mail et le mot de passe donnés.
+        """
+        user = self.create_user(
+        username,
+        password=password,
+        )
+        user.staff = True
+        user.admin = True
+        user.save(using=self._db)
+        return user
 
 
 
 
 
-class CustomUser(AbstractUser):
-    COACH = 'coach'
-    MENTOR = 'mentor'
-    PROJECT_OWNER = 'project_owner'
 
-    USER_TYPES = [
-        (COACH, 'Coach'),
-        (MENTOR, 'Mentor'),
-        (PROJECT_OWNER, 'Porteur de projet'),
-    ]
+class CustomUser(AbstractBaseUser, PermissionsMixin):
 
+    objects = UserManager()
+    username = models.CharField(
+    verbose_name='Username',
+    max_length=60,
+    unique=True,
+    )
 
-    user_type = models.CharField(max_length=50, choices=USER_TYPES, default=COACH)
-       
-    # Champs ManyToMany pour les groupes
-    groups = models.ManyToManyField(Group, related_name='users_group', blank=True)  # Nom personnalisé pour l'accessor
+    phone = models.CharField(max_length=100, default="345656")
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    staff = models.BooleanField(default=False) # a admin user; non super-user
+    admin = models.BooleanField(default=False) # a superuser
+    
+    groups = models.ManyToManyField(Group, related_name='users_group', blank=True) 
+    permission = models.ManyToManyField(Permission, related_name='users')
 
-    # Champs spécifiques aux Coaches
-    expertise = models.CharField(max_length=200,blank=False)
-    experience = models.IntegerField(default=0)
-    photo = models.ImageField(verbose_name='photo de profil', default="img/default_coach.jpg", upload_to='img_coachProfile', blank=True)
-
-    # # Champs spécifiques aux Mentors
-    # company = models.CharField(max_length=200, blank=True)
-    # mentor_expertise = models.CharField(max_length=200, blank=True)
-    # bio = models.TextField(blank=True)
-    # mentor_photo = models.ImageField(verbose_name='photo de profil', default="img/default_mentor.jpg", upload_to='img_mentorProfile', blank=True)
-
-    # Champs spécifiques aux Porteurs de projet
-    phone_number = models.CharField(max_length=20, blank=True)
-    project_owner_photo = models.ImageField(verbose_name='photo de profil', default="img/default_project_owner.jpg", upload_to='img_projectOwnerProfile', blank=True)
+    # remarquez l'absence du "champ password", c'est intégré pas besoin de preciser.
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = [] 
+    def get_full_name(self):
+    # L'utilisateur est identifié par son adresse e-mail
+        return self.username
+    def get_short_name(self):
+    # L'utilisateur est identifié par son adresse e-mail
+        return self.username
 
     def __str__(self):
         return self.username
 
+            
+        
+    def has_perm(self, perm, obj=None):
+        "L'utilisateur a-t-il une autorisation spécifique ?"
+    # Réponse la plus simple possible : Oui, toujours
+        return True
+
+    def has_module_perms(self, app_label):
+        "L'utilisateur dispose-t-il des autorisations nécessaires pour voir l'application ?`app_label`?"
+    # Réponse la plus simple possible : Oui, toujours
+        return True
+        
+    @property
+    def is_staff(self):
+        "L'utilisateur est-il un membre du personnel ?"
+        return self.staff
+    @property
+    def is_admin(self):
+        "L'utilisateur est-il un membre administrateur?"
+        return self.admin
+    
+ 
 
 # Create your models here.
 class Project(models.Model):
