@@ -92,6 +92,48 @@ class UserAdminChangeForm(forms.ModelForm):
 
 
 
+class CustomUserAdminCreationForm(UserCreationForm):
+    email = forms.EmailField()
+    phone = forms.CharField(max_length=100)
+    address = forms.CharField(max_length=200)
+    expertise = forms.CharField(max_length=200)
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'password', 'password2', 'phone', 'address', 'expertise')
+
+    def clean(self):
+            '''
+            Vérifiez que les deux mots de passe correspondent.
+            '''
+            cleaned_data = super().clean()
+            password = cleaned_data.get("password")
+            password_2 = cleaned_data.get("password_2")
+            if password is not None and password != password_2:
+                self.add_error("password_2", "Your passwords must match")
+            return cleaned_data
+
+    def save(self, commit=True):
+            # Enregistrez le mot de passe fourni au format haché
+            user = super().save(commit=False)
+            user.set_password(self.cleaned_data["password"])
+            if commit:
+                user.save()
+            return user
+
+class CustomUserAdminChangeForm(forms.ModelForm):
+    # Définissez les champs que vous souhaitez inclure lors de la modification d'un utilisateur existant.
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'phone', 'address', 'expertise', 'is_active', 'groups', 'permission')
+
+
+    def clean_password(self):
+    # Indépendamment de ce que l'utilisateur fournit, renvoie la valeur initiale.
+    # Cela se fait ici, plutôt que sur le terrain, car le
+    # le champ n'a pas accès à la valeur initiale
+        return self.initial["password"]
 
 
 

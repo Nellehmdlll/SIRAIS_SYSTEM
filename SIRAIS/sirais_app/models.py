@@ -73,6 +73,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     phone = models.CharField(max_length=100, default="345656")
+    email = models.EmailField(null=False,default=None)
+    address = models.CharField(max_length=200, blank=True, null=True, default="Votre adresse par défaut")
+    expertise = models.CharField(max_length=200,blank=False,default=None)
+    
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
