@@ -1,13 +1,9 @@
 from django.contrib import admin
 from .forms import CustomUserAdminChangeForm, CustomUserAdminCreationForm, UserAdminChangeForm, UserAdminCreationForm
-from sirais_app.models import CustomUser
-from .models import Project 
+from .models import Project , CustomUser
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AdminPasswordChangeForm
-
-from .models import CustomUser
-
 
 # , Task , Resource , Comment , CoachProjectAssignment, ProjectOwnerProjectAssignment
 
@@ -28,7 +24,7 @@ class CustomUserAdmin(BaseUserAdmin):
     list_filter = ['admin', 'staff']
     fieldsets = (
     (None, {'fields': ('username', 'password',)}),
-    ('Personal info', {'fields': ('email', 'phone', 'address', 'photo', 'expertise',)}),
+    ('Personal info', {'fields': ('email', 'phone', 'address','expertise',)}),
     ('Permissions', {'fields': ('is_active', 'staff', 'admin', 'groups', 'permission',)}),
     )
    
@@ -37,7 +33,7 @@ class CustomUserAdmin(BaseUserAdmin):
     add_fieldsets = (
     (None, {
     'classes': ('wide',),
-    'fields': ('username', 'password', 'password_2')}
+    'fields': ('username', 'password')}
     ),
     )
     search_fields = ['username']
@@ -61,13 +57,13 @@ class UserAdmin(BaseUserAdmin):
     ('Personal info', {'fields': ('phone',)}),
     ('Permissions', {'fields': ('admin',)}),
     )
-   
+
     # add_fieldsets n'est pas un attribut ModelAdmin standard. UtilisateurAdmin
     # remplace get_fieldsets pour utiliser cet attribut lors de la création d'un utilisateur.
     add_fieldsets = (
     (None, {
     'classes': ('wide',),
-    'fields': ('username', 'password', 'password_2')}
+    'fields': ('username', 'password')}
     ),
     )
     search_fields = ['username']
@@ -84,7 +80,7 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(Project)
 #admin.site.register(Project)
-admin.site.register(CustomUser, UserAdmin)
+#admin.site.register(CustomUser, UserAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)
 
 """ admin.site.register(Task)

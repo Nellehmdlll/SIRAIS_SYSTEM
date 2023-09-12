@@ -71,11 +71,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     max_length=60,
     unique=True,
     )
-
     phone = models.CharField(max_length=100, default="345656")
-    email = models.EmailField(null=False,default=None)
+    email = models.EmailField(null=True,default=None,blank=True)
     address = models.CharField(max_length=200, blank=True, null=True, default="Votre adresse par défaut")
-    expertise = models.CharField(max_length=200,blank=False,default=None)
+    expertise = models.CharField(max_length=200,blank=False,default=None, null=True,)
     
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

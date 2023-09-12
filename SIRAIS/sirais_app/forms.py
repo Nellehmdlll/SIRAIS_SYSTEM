@@ -93,6 +93,9 @@ class UserAdminChangeForm(forms.ModelForm):
 
 
 class CustomUserAdminCreationForm(UserCreationForm):
+    
+    password = forms.CharField(widget=forms.PasswordInput)
+    password_2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
     email = forms.EmailField()
     phone = forms.CharField(max_length=100)
     address = forms.CharField(max_length=200)
@@ -123,6 +126,7 @@ class CustomUserAdminCreationForm(UserCreationForm):
 
 class CustomUserAdminChangeForm(forms.ModelForm):
     # Définissez les champs que vous souhaitez inclure lors de la modification d'un utilisateur existant.
+    password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = CustomUser
@@ -285,5 +289,3 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['name', 'description', 'deadline']
-
-
