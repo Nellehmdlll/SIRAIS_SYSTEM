@@ -4,15 +4,13 @@ from django.utils import timezone
 from django.db.models import Q
 from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager, AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+#from django.contrib.auth import get_user_model
+#from django.contrib.auth.models import User
 from django.contrib.auth.models import PermissionsMixin
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        """
-        Crée et enregistre un utilisateur avec l'e-mail et le mot de passe donnés.
-        """
+    def create_user(self, username, password=None):
+      
         if not username:
             raise ValueError('Les utilisateurs doivent avoir un username')
 
@@ -20,8 +18,7 @@ class UserManager(BaseUserManager):
             self.model._meta.app_label, self.model._meta.object_name
         ) """
         #user = GlobalUserModel.normalize_username(username)
-        user = self.model(username=username,  **extra_fields)
-
+        user = self.model(username=username)
 
         user.set_password(password)
         user.save(using=self._db)
@@ -66,12 +63,8 @@ class UserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
-    username = models.CharField(
-    verbose_name='Username',
-    max_length=60,
-    unique=True,
-    )
-    phone = models.CharField(max_length=100, default="345656")
+    username = models.CharField(max_length=60,unique=True,)
+    phone = models.CharField(max_length=100, default="002266345656")
     email = models.EmailField(null=True,default=None,blank=True)
     address = models.CharField(max_length=200, blank=True, null=True, default="Votre adresse par défaut")
     expertise = models.CharField(max_length=200,blank=False,default=None, null=True,)
@@ -127,7 +120,7 @@ class Project(models.Model):
     desc = models.TextField(blank=True)
     start_date = models.DateTimeField(default=timezone.now, blank=True)
     end_date = models.DateTimeField(default=timezone.now, blank=True)
-    porteur_de_projet = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projets_porteur', limit_choices_to={'groups__name': 'Porteurs de projet'},default='Choisir un porteur de projet')
+    porteur_de_projet = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projets_porteur', limit_choices_to={'groups__name': 'Porteur de projet'},default='Choisir un porteur de projet')
     coach = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projets_coach', limit_choices_to={'groups__name': 'Coachs'},default='Choisir un coach')
     is_active = models.BooleanField(default=True)
 
@@ -173,7 +166,6 @@ class Resource(models.Model):
     file = models.FileField(upload_to='resources/', blank=True, null=True)
     link = models.URLField(blank=True, null=True)
     validated = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(default=timezone.now)
 
     VALIDATION_PHASES = (
@@ -183,7 +175,15 @@ class Resource(models.Model):
         ('entree_marche', 'Entrée sur le marché'),
     )
     validation_phase = models.CharField(max_length=20, choices=VALIDATION_PHASES, default='ideation')
+    
+    def is_coach(self):
+        return self.user.groups.filter(name='Coachs').exists()
 
+    def is_mentor(self):
+        return self.author.groups.filter(name='Mentors').exists()
+    
+    def is_porteur(self):
+        return self.author.groups.filter(name='Porteur de projet').exists()
 
     def __str__(self):
         return f"Resource {self.id} - {self.project.name}"
@@ -192,44 +192,14 @@ class Resource(models.Model):
 
 
 
-
-
-
-class CoachProjectAssignment(models.Model):
-    # Champ de clé étrangère pour lier le projet à l'utilisateur (coach, mentor, ou porteur de projet)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='coach_assignments', default=1)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    assignment_date = models.DateTimeField(auto_now_add=True)
+class Comment(models.Model):
+    content = models.TextField()
+    author = models.ForeignKey(CustomUser,on_delete=models.CASCADE,)
+    date = models.DateTimeField(auto_now_add=True)
+    resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='comments')
 
     def __str__(self):
-        return f"{self.coach} assigned to {self.project} on {self.assignment_date}"
-
-
-
-
-class ProjectOwnerProjectAssignment(models.Model):
-    project_owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='project_owner_assignments')
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    assignment_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.project_owner} assigned to {self.project} on {self.assignment_date}"
-
-
-
-# class Comment(models.Model):
-#     content = models.TextField()
-#     author = models.ForeignKey(
-#         CustomUser,
-#         on_delete=models.CASCADE,
-#         limit_choices_to=Q(coach__isnull=False) | Q(mentor__isnull=False)
-#     )
-#     date = models.DateTimeField(auto_now_add=True)
-#     project = models.ForeignKey('Project', on_delete=models.CASCADE, blank=True, null=True)
-#     task = models.ForeignKey('Task', on_delete=models.CASCADE, blank=True, null=True)
-
-#     def __str__(self):
-#         return f"Comment by {self.author} on {self.date}"
+        return f"{self.author} - {self.date}"
 
 
 

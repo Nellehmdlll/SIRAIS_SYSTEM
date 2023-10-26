@@ -2,16 +2,19 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import *
-from .forms import ProjectForm , ResourceForm ,BusinessModelCanvasForm,TaskForm
+from .forms import ProjectForm , ResourceForm ,BusinessModelCanvasForm,TaskForm,CommentForm
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from google_auth_oauthlib.flow import InstalledAppFlow
-from django.http import HttpResponse, HttpResponseRedirect
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 import datetime
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
+from sirais_app.context_processors import active_project
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AbstractUser,BaseUserManager, AbstractBaseUser
+
 
 
 
@@ -210,15 +213,17 @@ class ProjectDetailView(View):
 
         # Appel de la vue select_active_project pour définir le projet actif
         select_active_project(request, project_id)
-
+        
+        activ_project = active_project(request)
         context = {
             'project': project,
             'resources': resources,
             'progress': progress,       
             'project_id': project_id,  
             'phase': project.current_phase,
+            'active_project':activ_project,
             
-        }
+                   }
 
         return render(request, 'project_detail.html', context)
 
@@ -243,12 +248,11 @@ def phaseView(request, project_id):
     return render(request, 'phases.html', context)
 
 def validate_resources(request, phase, project_id):
-    pending_resources = Resource.objects.filter(validated=False, validation_phase=phase, project_id=project_id)
-    
+    pending_resources = Resource.objects.filter(validation_phase=phase, project_id=project_id)
     
     context = {
         'pending_resources': pending_resources,
-        # 'project': project,
+        #'project': project,
         'phase': phase, 
         'project_id':project_id,
         
@@ -258,12 +262,15 @@ def validate_resources(request, phase, project_id):
 
 
 
-
+@login_required
 def validate_resource(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
+    file_path = resource.file.path
+    is_coach = request.user.groups.filter(name='Coachs').exists()
+
 
     if request.method == 'POST':
-        action = request.POST.get('action', None)
+        action = request.POST.get('action')
         if action == 'validate':
             resource.validated = True
             resource.save()
@@ -272,11 +279,22 @@ def validate_resource(request, resource_id):
             resource.save()
 
         return redirect('validate_resources', phase=resource.validation_phase, project_id=resource.project_id)
-
+    
+    if request.user.groups.filter(name__in=['Coachs', 'Mentors']).exists():
+        resource.author = request.user
+        resource.validated = True
+        resource.save()
+        # Redirigez vers la page appropriée, par exemple, la liste des ressources
+        return redirect('resources_list')
+    
     context = {
         'resource': resource,
+        'file_path':file_path,
+        'is_coach':is_coach,
+        'user': request.user,
     }
     return render(request, 'validate_resource.html', context)
+    
 
 # def create_task(request, project_id):
 #     project = Project.objects.get(id=project_id)
@@ -321,6 +339,24 @@ def task_detail(request, project_id, task_id):
     return render(request, 'task_detail.html', {'task': task})
 
 
+
+
+
+def resource_detail(request, resource_id):
+    resource = Resource.objects.get(pk=resource_id)
+    
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.resource = resource
+            comment.author = request.user
+            comment.save()
+            return redirect('resource_detail', resource_id=resource_id)
+    else:
+        comment_form = CommentForm()
+
+    return render(request, 'resource_detail.html', {'resource': resource, 'comment_form': comment_form})
 
 
 

@@ -11,7 +11,7 @@
       </a>
         <h2>Ajouter une nouvelle ressource au projet</h2>
         
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
 
           <div class="form-row">
@@ -51,7 +51,8 @@
               
               
           </div>
-          <button type="submit" class="btn btn-primary">Ajouter une ressource</button>    </form>
+          <button type="submit" class="btn btn-primary">Ajouter une ressource</button>   
+         </form>
       </main>
 </div>
   

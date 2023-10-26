@@ -1,0 +1,106 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        margin-top: 20px;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #ffffff;
+    }
+
+    form {
+        margin-top: 20px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Style pour les commentaires existants */
+    .comment {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        background-color: #ffffff;
+        border-radius: 10px;
+    }
+
+    .comment p {
+        margin: 0;
+    }
+
+    .comment-info {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    /* Style pour le formulaire de commentaire */
+    textarea {
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    /* Style pour la liste des commentaires */
+    .comment-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .comment-item {
+        border: 1px solid #dee2e6;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 10px;
+    }
+
+    .comment-info {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .comment-content {
+        margin-top: 5px;
+    }
+</style>
+<!-- resource_detail.html -->
+<!-- Ajoutez cela là où vous souhaitez afficher le formulaire -->
+<a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Retour
+</a>
+<h2 class="mt-4">Commentaires</h2>
+<form method="post" action="{% url 'resource_detail' resource_id=resource.id %}">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit" class="btn btn-primary">Commenter</button>
+</form>
+
+<h3 class="mt-4">Commentaires précédents</h3>
+<ul class="comment-list">
+    {% for comment in resource.comments.all %}
+        <li class="comment-item">
+            <p class="comment-info">{{ comment.author }} - {{ comment.created_at }}</p>
+            <p class="comment-content">{{ comment.content }}</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

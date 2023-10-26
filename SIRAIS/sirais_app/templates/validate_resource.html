@@ -11,7 +11,7 @@
      
     </div>
     <div class="d-flex justify-content-between mb-4">
-        <a href="{% url 'add_resource' phase=phase project_id=project_id %}" class="btn btn-warning">Ajouter une ressource au projet</a>
+        <a href="{% url 'add_resource' phase=phase project_id=project_id %}" class="btn btn-warning">Ajouter une ressource de plus</a>
     </div>
 
     <div class="card mb-4">
@@ -33,12 +33,30 @@
                         <td>{{ resource.title }}</td>
                         <td>{{ resource.get_type_display }}</td>
                         <td>
-                          <a href="{% url 'validate_resource' resource.id %}?action=reject" class="btn btn-outline-info btn-sm">Voir</a>
-                          <a href="{% url 'validate_resource' resource.id %}?action=validate" class="btn btn-outline-success btn-sm">Commenter </a>
+                          <a href="{{ resource.file.url }}" class="btn btn-outline-info btn-sm">Voir</a>
+                          <a href="{% url 'resource_detail' resource_id=resource.id %}" class="btn btn-outline-success btn-sm">Commenter </a>
+                          {% if resource.validated %}
+                            <p> Validée par {{ request.user.username }}</p>
+                        {% else %}
+                            <p>En attente de validation</p>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        
+                        
 
-                            <a href="{% url 'validate_resource' resource.id %}?action=validate" class="btn btn-outline-success btn-sm">Valider</a>
-                            <a href="{% url 'validate_resource' resource.id  %}?action=reject" class="btn btn-outline-danger btn-sm">Rejeter</a>
-                           
+                        <form method="post" action="{% url 'validate_resource' resource_id=resource.id %}">
+                            {% csrf_token %}
+                            <button type="submit" name="action" class="btn btn-outline-success btn-sm" value="validate">Valider</button>
+                            <button type="submit" name="action" class="btn btn-outline-danger btn-sm" value="reject">Rejeter</button>
+                        </form>
+                        {% endif %}
+                       
+
+    
+
+
+
+
                           </td>
 
                     </tr>

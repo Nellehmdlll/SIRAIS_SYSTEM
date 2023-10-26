@@ -1,5 +1,6 @@
+from django.conf import settings
 from django.urls import path
-from .views import ProjectOwnerLoginView, ProjectListView ,DashboardView ,ResourceListView, BusinessModelView, CreateProjectView ,EditProjectView, DeleteProjectView ,ListView ,CreateTaskView
+from .views import ProjectOwnerLoginView, ProjectListView ,DashboardView ,ResourceListView, BusinessModelView, CreateProjectView ,EditProjectView, DeleteProjectView ,ListView ,CreateTaskView, resource_detail
 from .views import add_resource , ProjectDetailView ,validate_resources , agenda ,phaseView,validate_resource
 from . import views
 from django.contrib.auth import views as auth_views
@@ -11,7 +12,7 @@ urlpatterns = [
     #path('dashboard/',dashboard, name='dashboard'),  
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('create/', CreateProjectView.as_view(), name='create_project'),
-    path('detail/<int:project_id>/', ProjectDetailView.as_view(), name='project_detail'),
+    path('detail/<int:project_id>', ProjectDetailView.as_view(), name='project_detail'),
     path('liste/<str:liste_type>/', ListView.as_view(), name='liste'),
     path('project_liste/', ProjectListView.as_view(), name='project_liste'),
     path('edit/<int:id>/', EditProjectView.as_view(), name='edit_project'),
@@ -33,6 +34,7 @@ urlpatterns = [
     path('validate/<int:project_id>/<str:phase>/', validate_resources, name='validate_resources'),
     path('add_resource/<int:project_id>/<str:phase>/', add_resource, name='add_resource'),
     path('business_model/', BusinessModelView.as_view(), name='business_model'),
+    path('resources/<int:resource_id>/', resource_detail, name='resource_detail'),
 
     # path('authorize_google/', authorize_google, name='authorize_google'),
     # path('google_callback/', google_callback, name='google_callback'),
@@ -45,8 +47,5 @@ urlpatterns = [
     path('calendar/create_events/', views.create_calendar_event, name='create_events'),
 
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-
-    
-
 
 ]
