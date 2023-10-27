@@ -56,10 +56,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-
-
-
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
@@ -111,9 +107,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         "L'utilisateur est-il un membre administrateur?"
         return self.admin
     
- 
-
-# Create your models here.
 class Project(models.Model):
     id = models.AutoField(primary_key=True)  
     name = models.CharField(max_length=200)
@@ -145,10 +138,6 @@ class Project(models.Model):
     
     def __str__(self):
         return self.name
-
-
-
-
 
 
 class Resource(models.Model):
@@ -188,10 +177,6 @@ class Resource(models.Model):
     def __str__(self):
         return f"Resource {self.id} - {self.project.name}"
 
-
-
-
-
 class Comment(models.Model):
     content = models.TextField()
     author = models.ForeignKey(CustomUser,on_delete=models.CASCADE,)
@@ -200,7 +185,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.author} - {self.date}"
-
 
 
 class BusinessModelCanvas(models.Model):
@@ -222,16 +206,17 @@ class BusinessModelCanvas(models.Model):
 class Task(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
-    deadline = models.DateTimeField(default=None)
+    start_date = models.DateTimeField(default=timezone.now, blank=True)
+    deadline = models.DateTimeField(default=timezone.now, blank=True)
     status_choices = [
         ('pending', 'En attente'),
         ('in_progress', 'En cours'),
         ('completed', 'Terminée'),
     ]
     status = models.CharField(max_length=20, choices=status_choices, default='pending')
-    assigned_to = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='assigned_tasks',default=None)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
-    coach = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='assigned_tasks_coach', null=True, blank=True)
+    #assigned_to = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='assigned_tasks',default=None)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks',null=True,)
+    #coach = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='assigned_tasks_coach', null=True, blank=True)
     
     def __str__(self):
         return self.name

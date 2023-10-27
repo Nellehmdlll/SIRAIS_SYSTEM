@@ -11331,11 +11331,18 @@ button:hover {
   color: #6c757d;
 }
 
-/* Style pour le formulaire de commentaire */
+
 textarea {
   width: 100%;
   margin: 10px 0;
   padding: 10px;
 }
 
-/* Ajoutez d'autres styles selon vos besoins */
+
+.task {
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}

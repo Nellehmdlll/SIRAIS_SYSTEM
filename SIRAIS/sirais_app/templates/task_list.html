@@ -1,23 +1,79 @@
 {% extends 'index.html' %}
 
 {% block content %}
+<style>
+  /* styles.css */
+  .task {
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+  }
 
+  .task:hover {
+    background-color: #f8f8f8;
+  }
+
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 15px;
+  }
+</style>
 
 <div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
-    <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
+    <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;margin-right:35px;">
       <i class="fas fa-arrow-left"></i> Retour
   </a>
   
-  <a href=" {% url 'create_task' %} " class="btn btn-success">  <i class="bi bi-plus"></i>  Ajouter une tàche</a>
- 
+  <a href="{% url 'create_task' project.id %}" style="margin-left:35px;" class="btn btn-primary"><i class="bi bi-plus"></i> Ajouter une tâche</a>
+<div style="margin: 20px;">
+  <div class="column">
+    <h2>Tâches A Faire</h2>
+    {% for task in pending_tasks %}
+      <div class="task" >
+          <a href="" class="btn btn-danger">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+        {{ task.name }}
+      </div>
+    {% endfor %}
   </div>
-  <h2>Tâches du projet</h2>
-<ul>
-  {% for task in project.tasks.all %}
-    <li>{{ task.name }} - {{ task.status }}</li>
-  {% empty %}
-    <li>Aucune tâche trouvée.</li>
-  {% endfor %}
-</ul>
+
+  <div class="column">
+    <h2>Tâches en Cours</h2>
+    {% for task in ongoing_tasks %}
+      <div class="task" onclick="handleTaskClick('{{ task.id }}')">
+        <a href="" class="btn btn-warning">
+          <i class="bi bi-pencil-square"></i>
+      </a>  
+        {{ task.name }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="column">
+    <h2>Tâches Terminées</h2>
+    {% for task in completed_tasks %}
+      <div class="task" onclick="handleTaskClick('{{ task.id }}')">
+        <a href="" class="btn btn-success">
+          <i class="bi bi-pencil-square"></i>
+      </a>  
+        {{ task.name }}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+  <div style="clear:both;"></div>
+</div>
+
+<script>
+  function handleTaskClick(taskId) {
+    console.log(`Tâche ${taskId} cliquée`);
+  }
+</script>
 
 {% endblock %}

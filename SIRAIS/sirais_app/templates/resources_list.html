@@ -6,9 +6,6 @@
       <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
         <i class="fas fa-arrow-left"></i> Retour
     </a>
-    
-    <a href="{% url 'create_project' %}" class="btn btn-success">  <i class="bi bi-plus"></i>  Ajouter un projet</a>
-     
     </div>
 <div class="dashboard-content">
     
@@ -24,8 +21,10 @@
                         <th>AUTEUR DU DOCUMENT</th>
                         <th>TITRE DU DOCUMENT</th>
                         <th>LIEN DU DOCUMENT</th>
-                        <th>DATE DE CREATION</th>
-                        <th>PHASE DU PROJET</th>
+                        <th>DATE DE DOCUMENT</th>
+                        <th>PHASE DU DOCUMENT</th>
+                        <th>STATUT DU DOCUMENT</th>
+
                     </tr>
                 </thead>
                 
@@ -41,6 +40,13 @@
                         </td>
                         <td>{{ resource.created_at|date:"d/m/Y H:i" }}</td>
                         <td>{{ resource.get_validation_phase_display }}</td>
+                        <td>
+                            {% if resource.validated %}
+                            <p> Validée</p>
+                        {% else %}
+                            <p>En attente</p>
+                        {% endif %}
+                          </td>
                     </tr>
                     {% empty %}
                     <tr>

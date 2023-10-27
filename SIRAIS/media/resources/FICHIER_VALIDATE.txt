@@ -25,10 +25,6 @@
                         <th>Titre</th>
                         <th>Type</th>
                         <th>Actions</th>
-                        <th>Actions</th>
-                        <th>Etat de la ressource</th>
-
-
                     </tr>
                 </thead>
                 <tbody>
@@ -38,27 +34,37 @@
                         <td>{{ resource.get_type_display }}</td>
                         <td>
                           <a href="{{ resource.file.url }}" class="btn btn-outline-info btn-sm">Voir</a>
-                          <a href="{% url 'resource_detail' project_id=project.id resource_id=resource.id %}" class="btn btn-outline-success btn-sm">Commenter </a>
-                          
+                          <a href="{% url 'resource_detail' resource_id=resource.id %}" class="btn btn-outline-success btn-sm">Commenter </a>
+                          {% if resource.validated %}
+                            <p> Validée par {{ resource.author.username }}</p>
+                        {% else %}
+                            <p>En attente de validation</p>
+                        {% endif %}
                         
-                       
-                          </td>
-                          
-                          <td>
-                            {% if user.is_authenticated %}
+                        {% if user.is_authenticated %}
+                        {% if resource.is_coach or resource.is_mentor %}
                             <form method="post" action="{% url 'validate_resource' resource_id=resource.id %}">
                                 {% csrf_token %}
                                 <button type="submit" name="action" class="btn btn-outline-success btn-sm" value="validate">Valider</button>
                                 <button type="submit" name="action" class="btn btn-outline-danger btn-sm" value="reject">Rejeter</button>
                             </form>
-                            {% endif %}
-                          </td>
-                          <td>
-                            {% if resource.validated %}
-                            <p> Validée</p>
-                        {% else %}
-                            <p>En attente</p>
                         {% endif %}
+
+                        {% if 'Porteur de projet' in user.groups.values_list %}
+
+                                    {% if not resource.validated %}
+                                        <form method="post" action="{% url 'validate_resource' resource_id=resource.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" name="action" class="btn btn-outline-success btn-sm" value="validate">Valider</button>
+                                            <button type="submit" name="action" class="btn btn-outline-danger btn-sm" value="reject">Rejeter</button>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+                    {% endif %}
+                    
+                    
+
+
                           </td>
 
                     </tr>
@@ -71,3 +77,28 @@
     </div>
 </div>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% if 'Porteur de projet' in user.groups.values_list %}

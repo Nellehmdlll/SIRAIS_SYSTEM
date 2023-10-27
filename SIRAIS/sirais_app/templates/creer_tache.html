@@ -1,37 +1,11 @@
+<!-- create_task.html -->
 {% extends 'index.html' %}
 
 {% block content %}
-  <main class="content-wrap">
-    
-    <div class="card mb-4">
-      <div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
-        <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
-          <i class="fas fa-arrow-left"></i> Retour
-      </a>
-      
-       
-      </div>
-      <h2>Ajouter une tache</h2>
-    <form method="post">
-      {% csrf_token %}
-      <div class="form-row">
-        <div class="col-md-3 mb-3">
-          <label for="{{ form.name.id_for_label }}">Titre de la tache</label>
-          {{ form.name }}
-        </div>
-        <div class="col-md-3 mb-3">
-          <label for="{{ form.description.id_for_label }}">Contenu de la tache</label>
-          {{ form.description }}
-        </div>
-        <div class="col-md-3 mb-3">
-          <label for="{{ form.deadline.id_for_label }}">Date de fin</label>
-          {{ form.deadline }}
-        </div>
-      </div>
-      
-      
-      <button type="submit" class="btn btn-primary">Ajouter</button>
-    </form>
-  </main>
-  
+  <h2>Créer une nouvelle tâche</h2>
+  <form method="post" action="{% url 'create_task' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Créer la tâche</button>
+  </form>
 {% endblock %}

@@ -67,24 +67,24 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">SIRA Labs</div>
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{% url 'project_detail' project.id %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 TABLEAU DE BORD
                             </a>
                             <div class="sb-sidenav-menu-heading">GESTION DES PROJETS</div>
-                            <a class="nav-link collapsed" href="{% url 'project_liste' %}" >
+                            <a class="nav-link collapsed" href="{% url 'project_liste' project.id %}" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 PROJETS
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
 
-                            <a class="nav-link collapsed" href="" > 
+                            <a class="nav-link collapsed" href="{% url 'project_resource' project.id %}" > 
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 DOCUMENTS
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             
-                            <a class="nav-link collapsed" href="{% url 'business_model' %}" >
+                            <a class="nav-link collapsed" href="{% url 'business_model' project.id %}" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 BUSINESS MODELE
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -100,7 +100,7 @@
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                          
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{% url 'task_list' project.id %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 TACHES
                             </a>

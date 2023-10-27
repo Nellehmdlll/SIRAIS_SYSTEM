@@ -208,14 +208,14 @@ class ResourceForm(forms.ModelForm):
 class BusinessModelCanvasForm(forms.ModelForm):
     class Meta:
         model = BusinessModelCanvas
-        fields = ['key_segment', 'value_proposition', 'channels','customer_relation', 'key_resource' , 'key_activities','key_partners', 'money_structure']  
+        fields = '__all__'  
 
  
 
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'description', 'deadline']
+        fields = ['name','project','start_date','deadline','status','description']
         
         
 class CommentForm(forms.ModelForm):

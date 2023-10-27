@@ -32,7 +32,7 @@ class ProjectOwnerLoginView(View):
         
         if user is not None:
             login(request, user)
-            return redirect('project_liste') 
+            return redirect('project_liste',id=user.id) 
         else:
             return render(request, self.login_page, {'error_message': 'Identifiant ou mot de passe incorrect.'})
 
@@ -72,8 +72,6 @@ class DashboardView(View):
         return render(request, 'dashboard.html', context)
 
 
-
-
 class ListView(View):
     def get(self, request, liste_type):
         if liste_type == 'mentors':
@@ -97,23 +95,27 @@ class ListView(View):
         return render(request, 'liste.html', context)
 
 class ProjectListView(View):
-    def get(self, request):
+    def get(self, request,id):
         projects = Project.objects.all()
+        project = get_object_or_404(Project, id=id)
+
         context = {
             'projects': projects,
+            'project':project,
         }
         return render(request, 'project_list.html', context)
 
 class ResourceListView(View):
     def get(self, request, project_id):
+        project = get_object_or_404(Project, id=project_id)
+
         resources = Resource.objects.filter(project_id=project_id)
 
         context = {
             'resources': resources,
+            'project':project,
         }
         return render(request, 'resources_list.html', context)
-
-
 
 class CreateProjectView(View):
     template_name = 'create_project.html'
@@ -153,11 +155,13 @@ class DeleteProjectView(View):
         return redirect('project_liste')
     
 
-
 def add_resource(request, project_id, phase ):
+    project = get_object_or_404(Project, id=project_id)
+
     if request.method == 'POST':
         form = ResourceForm(request.POST, request.FILES)
         if form.is_valid():
+            
             resource = form.save(commit=False)
             resource.project_id = project_id
             resource.validation_phase = Project.objects.get(id=project_id).current_phase
@@ -168,30 +172,26 @@ def add_resource(request, project_id, phase ):
             return redirect('validate_resources', project_id=project_id,phase=phase)
     else:
         form = ResourceForm()
-    return render(request, 'add_resource.html', {'form': form})
+    return render(request, 'add_resource.html', {'form': form,'project':project})
 
 
 def BusinessModelView(request):
     return render(request, 'business_model.html')
 
-class BusinessModelView(View):
-    template_name = 'business_model.html'
+def create_business_model(request, project_id):
+    project = Project.objects.get(id=project_id)
 
-    def get(self, request):
-        form = BusinessModelCanvasForm()
-        return render(request, 'business_model.html', {'form': form})
-
-    def post(self, request):
+    if request.method == 'POST':
         form = BusinessModelCanvasForm(request.POST)
         if form.is_valid():
-            project = Project.id
-            canvas_data = form.save(commit=False)
-            canvas_data.project = project
-            canvas_data.save()
-            return redirect('dashboard')  # Redirigez vers la page appropriée après l'enregistrement
-        return render(request, 'business_model.html', {'form': form})
+            business_model = form.save(commit=False)
+            business_model.project = project
+            business_model.save()
+            return redirect('project_detail', project_id=project_id)
+    else:
+        form = BusinessModelCanvasForm()
 
-
+    return render(request, 'business_model.html', {'form': form, 'project': project})
 def select_active_project(request, project_id):
     try:
         active_project = Project.objects.get(id=project_id)
@@ -200,7 +200,6 @@ def select_active_project(request, project_id):
         request.user.save()
     except Project.DoesNotExist:
         pass
-
 
 
 class ProjectDetailView(View):
@@ -249,17 +248,17 @@ def phaseView(request, project_id):
 
 def validate_resources(request, phase, project_id):
     pending_resources = Resource.objects.filter(validation_phase=phase, project_id=project_id)
-    
+    project = get_object_or_404(Project, id=project_id)
+
     context = {
         'pending_resources': pending_resources,
         #'project': project,
         'phase': phase, 
         'project_id':project_id,
+        'project':project,
         
     }
     return render(request, 'validate_resource.html', context)
-
-
 
 
 @login_required
@@ -294,45 +293,40 @@ def validate_resource(request, resource_id):
         'user': request.user,
     }
     return render(request, 'validate_resource.html', context)
-    
 
-# def create_task(request, project_id):
-#     project = Project.objects.get(id=project_id)
-#     coaches = CustomUser.objects.filter(groups__name='coach')  
-    
-#     if request.method == 'POST':
-#         form = TaskForm(request.POST)
-#         if form.is_valid():
-#             task = form.save(commit=False)
-#             task.project = project
-#             task.coach = request.user if request.user.groups.filter(name='coach').exists() else None
-#             task.save()
-#             return redirect('task_list', project_id=project.id)
-#     else:
-#         form = TaskForm()
-#         print(form.errors)
-#     return render(request, 'create_task.html', {'form': form, 'project': project, 'coaches': coaches})
+def create_task(request,project_id):
+    current_project_id = request.session.get('current_project_id')
+    current_project = get_object_or_404(Project, id=project_id)
 
 
-
-class CreateTaskView(View):
-    template_name = 'create_task.html'
-
-    def get(self, request):
-        form = TaskForm()
-        return render(request, 'create_task.html', {'form': form})
-
-    def post(self, request):
+    if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            task = form.save()
-            return redirect('project_detail', task_id=task.id)
-        return render(request, 'task_list.html', {'form': form})
-    
-def task_list(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
-    tasks = Task.objects.filter(project=project)
-    return render(request, 'task_list.html', {'project': project, 'tasks': tasks})
+            task = form.save(commit=False)
+            task.project_id = current_project_id
+            task.save()
+            return redirect('task_list')
+    else:
+        form = TaskForm(initial={'project': current_project_id})
+
+    return render(request, 'create_task.html', {'form': form},{'current_project':current_project},{'project_id':project_id})
+
+def task_list(request,id):
+    project = get_object_or_404(Project, id=id)
+
+    pending_tasks = Task.objects.filter(project=project,status='pending')
+    ongoing_tasks = Task.objects.filter(project=project,status='in_progress')
+    completed_tasks = Task.objects.filter(project=project,status='completed')
+
+    context = {
+        
+        'pending_tasks': pending_tasks,
+        'ongoing_tasks': ongoing_tasks,
+        'completed_tasks': completed_tasks,
+        'project':project,
+    }
+    return render(request, 'task_list.html', context)
+
 
 def task_detail(request, project_id, task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -342,8 +336,10 @@ def task_detail(request, project_id, task_id):
 
 
 
-def resource_detail(request, resource_id):
+def resource_detail(request,project_id,resource_id):
     resource = Resource.objects.get(pk=resource_id)
+    project = get_object_or_404(Project, id=project_id)
+
     
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
@@ -352,11 +348,11 @@ def resource_detail(request, resource_id):
             comment.resource = resource
             comment.author = request.user
             comment.save()
-            return redirect('resource_detail', resource_id=resource_id)
+            return redirect('resource_detail',project_id=project_id ,resource_id=resource_id)
     else:
         comment_form = CommentForm()
 
-    return render(request, 'resource_detail.html', {'resource': resource, 'comment_form': comment_form})
+    return render(request, 'resource_detail.html', {'project':project,'resource': resource, 'comment_form': comment_form})
 
 
 

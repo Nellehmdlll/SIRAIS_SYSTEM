@@ -24,3 +24,10 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
 });
+// task_list.js
+
+function handleTaskClick(taskId) {
+    // Ajoute ici le code pour changer l'état de la tâche
+    console.log(`Tâche ${taskId} cliquée`);
+    // Tu peux faire une requête AJAX pour changer l'état côté serveur si nécessaire
+}

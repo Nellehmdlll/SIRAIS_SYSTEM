@@ -88,7 +88,7 @@
     <i class="fas fa-arrow-left"></i> Retour
 </a>
 <h2 class="mt-4">Commentaires</h2>
-<form method="post" action="{% url 'resource_detail' resource_id=resource.id %}">
+<form method="post" action="{% url 'resource_detail' project_id=project.id resource_id=resource.id %}">
     {% csrf_token %}
     {{ comment_form.as_p }}
     <button type="submit" class="btn btn-primary">Commenter</button>

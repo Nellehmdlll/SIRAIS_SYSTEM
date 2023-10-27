@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import path
-from .views import ProjectOwnerLoginView, ProjectListView ,DashboardView ,ResourceListView, BusinessModelView, CreateProjectView ,EditProjectView, DeleteProjectView ,ListView ,CreateTaskView, resource_detail
-from .views import add_resource , ProjectDetailView ,validate_resources , agenda ,phaseView,validate_resource
+from .views import ProjectOwnerLoginView, ProjectListView ,DashboardView ,ResourceListView, BusinessModelView, CreateProjectView ,EditProjectView, DeleteProjectView ,ListView ,resource_detail
+from .views import add_resource , ProjectDetailView ,validate_resources , agenda ,create_business_model,validate_resource
 from . import views
 from django.contrib.auth import views as auth_views
 
@@ -14,16 +14,16 @@ urlpatterns = [
     path('create/', CreateProjectView.as_view(), name='create_project'),
     path('detail/<int:project_id>', ProjectDetailView.as_view(), name='project_detail'),
     path('liste/<str:liste_type>/', ListView.as_view(), name='liste'),
-    path('project_liste/', ProjectListView.as_view(), name='project_liste'),
+    path('project_liste/<int:id>', ProjectListView.as_view(), name='project_liste'),
     path('edit/<int:id>/', EditProjectView.as_view(), name='edit_project'),
     path('delete/<int:id>/', DeleteProjectView.as_view(), name='delete_project'),
     path('resource/<int:project_id>/', ResourceListView.as_view(), name='project_resource'),
+
     #path('phases/<int:project_id>/', phaseView, name='phases'),
     
-    path('creer/', CreateTaskView.as_view(), name='create_task'),
 
-    #path('project/<int:project_id>/create_task/', views.create_task, name='create_task'),
-    path('project/<int:project_id>/tasks/', views.task_list, name='task_list'),
+    path('tasks/<int:id>', views.task_list, name='task_list'),
+    path('create_task/<int:project_id>/', views.create_task, name='create_task'),
     path('project/<int:project_id>/task/<int:task_id>/', views.task_detail, name='task_detail'),
  
 
@@ -33,8 +33,8 @@ urlpatterns = [
 
     path('validate/<int:project_id>/<str:phase>/', validate_resources, name='validate_resources'),
     path('add_resource/<int:project_id>/<str:phase>/', add_resource, name='add_resource'),
-    path('business_model/', BusinessModelView.as_view(), name='business_model'),
-    path('resources/<int:resource_id>/', resource_detail, name='resource_detail'),
+    path('business_model/<int:project_id>/', create_business_model, name='business_model'),
+    path('resources/<int:project_id>/<int:resource_id>/', resource_detail, name='resource_detail'),
 
     # path('authorize_google/', authorize_google, name='authorize_google'),
     # path('google_callback/', google_callback, name='google_callback'),
