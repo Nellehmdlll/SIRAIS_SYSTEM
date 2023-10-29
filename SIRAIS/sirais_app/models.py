@@ -64,6 +64,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(null=True,default=None,blank=True)
     address = models.CharField(max_length=200, blank=True, null=True, default="Votre adresse par défaut")
     expertise = models.CharField(max_length=200,blank=False,default=None, null=True,)
+    biographie = models.TextField(blank=True,null=True)
+
+    projects = models.ManyToManyField('Project', related_name='members', blank=True)
     
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

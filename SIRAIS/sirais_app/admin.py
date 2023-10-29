@@ -17,12 +17,13 @@ class CustomUserAdmin(BaseUserAdmin):
     # Les champs à utiliser pour afficher le modèle User.
     # Celles-ci remplacent les définitions de la baseUserAdmin
     # qui font référence à des champs spécifiques sur auth.User.
-    list_display = ['username', 'admin','staff','email', 'phone', 'address']
+    list_display = ['username','staff','email', 'phone', 'address','expertise']
     list_filter = ['admin', 'staff']
     fieldsets = (
     (None, {'fields': ('username', 'password',)}),
-    ('Personal info', {'fields': ('email', 'phone', 'address','expertise',)}),
-    ('Permissions', {'fields': ('is_active', 'staff', 'admin', 'groups', 'permission',)}),
+    ('Personal info', {'fields': ('email', 'phone', 'address','expertise','biographie')}),
+    ('Permissions', {'fields': ('is_active', 'staff', 'admin', 'groups',)}),
+    
     )
    
     add_fieldsets = (

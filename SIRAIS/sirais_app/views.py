@@ -36,6 +36,8 @@ class ProjectOwnerLoginView(View):
         else:
             return render(request, self.login_page, {'error_message': 'Identifiant ou mot de passe incorrect.'})
 
+        
+
 class ProjectOwnerLogoutView(View):
     def get(self, request):
         logout(request)
