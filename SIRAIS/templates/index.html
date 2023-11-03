@@ -72,7 +72,7 @@
                                 TABLEAU DE BORD
                             </a>
                             <div class="sb-sidenav-menu-heading">GESTION DES PROJETS</div>
-                            <a class="nav-link collapsed" href="{% url 'project_liste' project.id %}" >
+                            <a class="nav-link collapsed" href="{% url 'project_liste' %}" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 PROJETS
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -94,17 +94,12 @@
                                 AGENDA
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" >
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                DISCUSSIONS
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                         
+
                             <a class="nav-link" href="{% url 'task_list' project.id %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 TACHES
                             </a>
-                            <a class="nav-link collapsed" href="{% url 'dashboard' %}" >
+                            <a class="nav-link collapsed" href="{% url 'dashboard' project.id  %}" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 DONNEES
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>

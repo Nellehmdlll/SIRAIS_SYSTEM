@@ -14,64 +14,111 @@ from datetime import datetime, timedelta
 from sirais_app.context_processors import active_project
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AbstractUser,BaseUserManager, AbstractBaseUser
-
-
-
-
-class ProjectOwnerLoginView(View):
-    login_page = 'projectOwner_login_view.html'
-    is_staff=True
-
-    def get(self, request):
-        return render(request, self.login_page)
-
-    def post(self, request):
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return redirect('project_liste',id=user.id) 
-        else:
-            return render(request, self.login_page, {'error_message': 'Identifiant ou mot de passe incorrect.'})
-
-        
-
-class ProjectOwnerLogoutView(View):
-    def get(self, request):
-        logout(request)
-        return redirect('login')  
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class DashboardView(View):
+    template_name = 'dashboard.html'
 
-    def get(self, request):
-        num_coaches = CustomUser.objects.filter(user_type='coach').count()
 
-        num_mentors = CustomUser.objects.filter(user_type='mentor').count()
-        liste_mentors = CustomUser.objects.filter(user_type='mentor').all()
+    def get(self, request,project_id):
+        # Nombre total de projets
+        project = get_object_or_404(Project, id=project_id)
 
-        num_project_owners = CustomUser.objects.filter(user_type='project_owner').count()
-        liste_project_owners = CustomUser.objects.filter(user_type='project_owner').all()
+        total_projects = Project.objects.count()
 
-        nombre_projets = Project.objects.count()
+        # Nombre total de membres dans le projet
+        total_members = CustomUser.objects.filter(project__isnull=False).count()
 
-    
+        # Nombre total de coachs, porteurs de projet et mentors
+        total_coachs = CustomUser.objects.filter(groups__name='Coach').count()
+        total_porteurs = CustomUser.objects.filter(groups__name='Porteur de projet').count()
+        total_mentors = CustomUser.objects.filter(groups__name='Mentor').count()
+
+        # Calcul de la progression sur les projets (exemple avec des tâches)
+        total_tasks = Task.objects.count()
+        completed_tasks = Task.objects.filter(status='completed').count()
+
+        if total_tasks > 0:
+            progression = (completed_tasks / total_tasks) * 100
+        else:
+            progression = 0
+
         context = {
-            'num_coaches': num_coaches,
-
-            'num_mentors': num_mentors,
-            'liste_mentors':liste_mentors,
-
-            'num_project_owners': num_project_owners,
-            'liste_project_owners':liste_project_owners,
-
-            'num_project': nombre_projets,
+            'total_projects': total_projects,
+            'total_members': total_members,
+            'total_coachs': total_coachs,
+            'total_porteurs': total_porteurs,
+            'total_mentors': total_mentors,
+            'progression': progression,
+            'project':project,
         }
 
-        return render(request, 'dashboard.html', context)
+        return render(request, self.template_name, context)
+
+
+def signin(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            print("User logged in:", user.username)
+            login(request, user)
+            print("User logged in:", user.username)
+            return redirect('project_liste')  
+        else:
+            print("Form is not valid:", form.errors)
+    else:
+        form = AuthenticationForm()
+    return render(request, 'projectOwner_login_view.html', {'form': form})
+
+def signout(request):
+    logout(request)
+    return redirect('signin')  # Redirigez vers la page de connexion
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Connectez l'utilisateur après l'inscription
+            login(request, user)
+            return redirect('project_liste')  # Redirigez vers la page du tableau de bord ou une autre page
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+# class DashboardView(View):
+
+#     def get(self, request):
+#         #request.user.groups.first.name
+#         num_coaches = CustomUser.objects.filter(user_groups='Coachs').count()
+
+#         num_mentors = CustomUser.objects.filter(user_groups='Mentors').count()
+#         liste_mentors = CustomUser.objects.filter(user_groups='Porteur de projet').all()
+
+#         num_project_owners = CustomUser.objects.filter(user_groups='project_owner').count()
+#         liste_project_owners = CustomUser.objects.filter(user_groups='project_owner').all()
+
+#         nombre_projets = Project.objects.count()
+
+    
+#         context = {
+#             'num_coaches': num_coaches,
+
+#             'num_mentors': num_mentors,
+#             'liste_mentors':liste_mentors,
+
+#             'num_project_owners': num_project_owners,
+#             'liste_project_owners':liste_project_owners,
+
+#             'num_project': nombre_projets,
+#         }
+
+#         return render(request, 'dashboard.html', context)
 
 
 class ListView(View):
@@ -97,13 +144,10 @@ class ListView(View):
         return render(request, 'liste.html', context)
 
 class ProjectListView(View):
-    def get(self, request,id):
+    def get(self, request):
         projects = Project.objects.all()
-        project = get_object_or_404(Project, id=id)
-
         context = {
             'projects': projects,
-            'project':project,
         }
         return render(request, 'project_list.html', context)
 
@@ -137,18 +181,19 @@ class CreateProjectView(View):
 class EditProjectView(View):
     template_name = 'edit_project.html'
 
-    def get(self, request, id):
+    def get(self, request,id):
         project = get_object_or_404(Project, id=id)
-        form = ProjectForm(instance=project)
-        return render(request, 'edit_project.html', {'form': form, 'project':project})
+        form = ProjectForm()
+        return render(request, 'edit_project.html', {'form': form,'project':project})
 
-    def post(self, request, id):
+    def post(self, request,id):
+        form = ProjectForm(request.POST)
         project = get_object_or_404(Project, id=id)
-        form = ProjectForm(request.POST, instance=project)
+
         if form.is_valid():
             form.save()
             return redirect('project_liste')
-        return render(request, 'project_list.html', {'form': form, 'project':project})
+        return render(request, 'project_list.html', {'form': form,'project':project})
     
 class DeleteProjectView(View):
     def get(self, request, id):
@@ -296,22 +341,35 @@ def validate_resource(request, resource_id):
     }
     return render(request, 'validate_resource.html', context)
 
-def create_task(request,project_id):
-    current_project_id = request.session.get('current_project_id')
-    current_project = get_object_or_404(Project, id=project_id)
+# def create_task(request,id):
+#     current_project_id = request.session.get('current_project_id')
+#     project = get_object_or_404(Project, id=id)
+#     if request.method == 'POST':
+#         form = TaskForm(request.POST)
+#         if form.is_valid():
+#             task = form.save(commit=False)
+#             task.project_id = current_project_id
+#             task.save()
+#             return redirect('task_list')
+#     else:
+#         form = TaskForm(initial={'project': current_project_id})
 
+#     return render(request, 'create_task.html', {'form': form},{'project':project},{'id':id})
 
+def create_task(request, project_id):
+    project = Project.objects.get(id=project_id)
+    
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
-            task.project_id = current_project_id
+            task.project = project
             task.save()
-            return redirect('task_list')
+            return redirect('task_list',project.id)
     else:
-        form = TaskForm(initial={'project': current_project_id})
-
-    return render(request, 'create_task.html', {'form': form},{'current_project':current_project},{'project_id':project_id})
+        form = TaskForm()
+        print(form.errors)
+    return render(request, 'create_task.html', {'form': form, 'project': project,})
 
 def task_list(request,id):
     project = get_object_or_404(Project, id=id)

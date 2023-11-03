@@ -1,11 +1,50 @@
-<!-- create_task.html -->
 {% extends 'index.html' %}
 
 {% block content %}
-  <h2>Créer une nouvelle tâche</h2>
-  <form method="post" action="{% url 'create_task' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Créer la tâche</button>
-  </form>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="text-center">Créer une nouvelle tâche</h2>
+          </div>
+          <div class="card-body">
+            <form method="post" action="{% url 'create_task' project.id %}" class="needs-validation" novalidate>
+              {% csrf_token %}
+              <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                <div class="invalid-feedback">
+                  {{ form.name.errors }}
+                </div>
+              </div>
+              <div class="mb-3">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+                <div class="invalid-feedback">
+                  {{ form.description.errors }}
+                </div>
+              </div>
+             
+              <div class="mb-3">
+                {{ form.deadline.label_tag }}
+                {{ form.deadline }}
+                <div class="invalid-feedback">
+                  {{ form.deadline.errors }}
+                </div>
+              </div>
+              <div class="mb-3">
+                {{ form.status.label_tag }}
+                {{ form.status }}
+                <div class="invalid-feedback">
+                  {{ form.status.errors }}
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Créer la tâche</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

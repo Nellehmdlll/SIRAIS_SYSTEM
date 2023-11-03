@@ -83,6 +83,18 @@
                         <div class="progress-bar" role="progressbar"  aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
+                <div class="card-header">
+                    <h3>Tâches du projet<strong> {{ project.name }} </strong></h3>
+                </div>
+                
+                    <ul>
+                    {% for task in project.tasks.all %}
+                        <li>{{ task.name }} - {{ task.status }}</li>
+                    {% empty %}
+                        <li>Aucune tâche trouvée.</li>
+                    {% endfor %}
+                    </ul>
+                    
             </div>
         </div>
     </div>
@@ -126,14 +138,7 @@
     </div>
 </div>
 
-<h2>Tâches du projet</h2>
-<ul>
-  {% for task in project.tasks.all %}
-    <li>{{ task.name }} - {{ task.status }}</li>
-  {% empty %}
-    <li>Aucune tâche trouvée.</li>
-  {% endfor %}
-</ul>
+
 
 
 {% endblock %}

@@ -72,9 +72,9 @@
         {% endif %}
         <form method="post">
             {% csrf_token %}
-            <label for="id_username">Nom d'utilisateur:</label>
+            <label for="id_username">Entrez votre mail:</label>
             <input type="text" name="username" id="id_username" required>
-            <label for="id_password">Mot de passe:</label>
+            <label for="id_password">Entrer votre mot de passe :</label>
             <input type="password" name="password" id="id_password" required>
             <input type="submit" value="Se connecter">
             {% csrf_token %}

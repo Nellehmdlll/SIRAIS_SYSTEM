@@ -42,7 +42,7 @@ class CustomUserAdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'phone', 'address', 'expertise', 'is_active', 'groups', 'permission')
+        fields = ('username', 'email', 'phone', 'address', 'expertise', 'is_active', 'groups')
 
 
     def clean_password(self):
@@ -57,7 +57,7 @@ class CustomUserAdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'phone', 'address', 'expertise', 'is_active', 'groups', 'permission')
+        fields = ('username', 'email', 'phone', 'address', 'expertise', 'is_active', 'groups')
 
 
     def clean_password(self):
@@ -215,7 +215,7 @@ class BusinessModelCanvasForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name','project','start_date','deadline','status','description']
+        fields = ['name','start_date','deadline','status','description']
         
         
 class CommentForm(forms.ModelForm):

@@ -1,25 +1,78 @@
-<!-- sirais_app/templates/edit_business_model.html -->
 {% extends 'index.html' %}
 
 {% block content %}
-<style>
-  /* Ajoutez votre style CSS ici */
-
-  textarea {
-    width: 100%;
-    height: 150px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px;
-    resize: none;
-  }
-</style>
-<body>
-  <h2>BUSINESS MODEL CANVA DU PROJET {{ project.name }}</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-  </form>
-</body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="text-center">BUSINESS MODEL CANVAS DU PROJET {{ project.name }}</h2>
+        <form method="post" class="needs-validation" novalidate action="{% url 'business_model' project.id %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            {{ form.key_segment.label_tag }}
+            {{ form.key_segment }}
+            <div class="invalid-feedback">
+              {{ form.key_segment.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.value_proposition.label_tag }}
+            {{ form.value_proposition }}
+            <div class="invalid-feedback">
+              {{ form.value_proposition.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.channels.label_tag }}
+            {{ form.channels }}
+            <div class="invalid-feedback">
+              {{ form.channels.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.customer_relation.label_tag }}
+            {{ form.customer_relation }}
+            <div class="invalid-feedback">
+              {{ form.customer_relation.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.money_source.label_tag }}
+            {{ form.money_source }}
+            <div class="invalid-feedback">
+              {{ form.money_source.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.key_resource.label_tag }}
+            {{ form.key_resource }}
+            <div class="invalid-feedback">
+              {{ form.key_resource.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.key_activities.label_tag }}
+            {{ form.key_activities }}
+            <div class="invalid-feedback">
+              {{ form.key_activities.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.key_partners.label_tag }}
+            {{ form.key_partners }}
+            <div class="invalid-feedback">
+              {{ form.key_partners.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.money_structure.label_tag }}
+            {{ form.money_structure }}
+            <div class="invalid-feedback">
+              {{ form.money_structure.errors }}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+  </div>
 {% endblock %}

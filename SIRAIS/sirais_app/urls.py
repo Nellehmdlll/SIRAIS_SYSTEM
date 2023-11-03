@@ -1,20 +1,23 @@
 from django.conf import settings
 from django.urls import path
-from .views import ProjectOwnerLoginView, ProjectListView ,DashboardView ,ResourceListView, BusinessModelView, CreateProjectView ,EditProjectView, DeleteProjectView ,ListView ,resource_detail
+from .views import ProjectListView ,DashboardView ,ResourceListView, BusinessModelView, CreateProjectView ,EditProjectView, DeleteProjectView ,ListView ,resource_detail, signin, signout, signup
 from .views import add_resource , ProjectDetailView ,validate_resources , agenda ,create_business_model,validate_resource
 from . import views
 from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
+    path('signup/', signup, name='signup'),
+    path('', signin, name='signin'),
+    path('signout/', signout, name='signout'),
 
-    path('', ProjectOwnerLoginView.as_view(), name='porteur_de_projet_login'),
+    #path('', ProjectOwnerLoginView.as_view(), name='porteur_de_projet_login'),
     #path('dashboard/',dashboard, name='dashboard'),  
-    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/<int:project_id>', DashboardView.as_view(), name='dashboard'),
     path('create/', CreateProjectView.as_view(), name='create_project'),
     path('detail/<int:project_id>', ProjectDetailView.as_view(), name='project_detail'),
     path('liste/<str:liste_type>/', ListView.as_view(), name='liste'),
-    path('project_liste/<int:id>', ProjectListView.as_view(), name='project_liste'),
+    path('project_liste/', ProjectListView.as_view(), name='project_liste'),
     path('edit/<int:id>/', EditProjectView.as_view(), name='edit_project'),
     path('delete/<int:id>/', DeleteProjectView.as_view(), name='delete_project'),
     path('resource/<int:project_id>/', ResourceListView.as_view(), name='project_resource'),

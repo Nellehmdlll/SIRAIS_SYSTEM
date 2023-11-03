@@ -3,112 +3,55 @@ from django.db import models
 from django.utils import timezone
 from django.db.models import Q
 from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 from django.utils.translation import gettext_lazy as _
 #from django.contrib.auth import get_user_model
 #from django.contrib.auth.models import User
 from django.contrib.auth.models import PermissionsMixin
 
-class UserManager(BaseUserManager):
-    def create_user(self, username, password=None):
-      
-        if not username:
-            raise ValueError('Les utilisateurs doivent avoir un username')
 
-        """ GlobalUserModel = apps.get_model(
-            self.model._meta.app_label, self.model._meta.object_name
-        ) """
-        #user = GlobalUserModel.normalize_username(username)
-        user = self.model(username=username)
-
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-
-
-    def create_staffuser(self, username, password):
-        """
-        Crée et enregistre un utilisateur du staff avec l'e-mail et le mot de passe donnés.
-        """
-        user = self.create_user(
-        username,
-        password=password,
-        )
-        user.staff = True
-        user.save(using=self._db)
-        return user
-
-
-
-
-    def create_superuser(self, username, password):
-        """
-        Crée et enregistre un superutilisateur avec l'e-mail et le mot de passe donnés.
-        """
-        user = self.create_user(
-        username,
-        password=password,
-        )
-        user.staff = True
-        user.admin = True
-        user.save(using=self._db)
-        return user
-
+        return self.create_user(username, email, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-
-    objects = UserManager()
-    username = models.CharField(max_length=60,unique=True,)
+    username = models.CharField(max_length=60, unique=True)
+    first_name = models.CharField(max_length=30,default='Nom')
+    last_name = models.CharField(max_length=30,default='Prénom')
+    email = models.EmailField(unique=True,default='votremail@gmail.com')
     phone = models.CharField(max_length=100, default="002266345656")
-    email = models.EmailField(null=True,default=None,blank=True)
     address = models.CharField(max_length=200, blank=True, null=True, default="Votre adresse par défaut")
     expertise = models.CharField(max_length=200,blank=False,default=None, null=True,)
     biographie = models.TextField(blank=True,null=True)
 
-    projects = models.ManyToManyField('Project', related_name='members', blank=True)
+    project = models.OneToOneField('Project', related_name='member', null=True, blank=True, on_delete=models.SET_NULL)
     
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False) # a admin user; non super-user
+    is_staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
-    
-    groups = models.ManyToManyField(Group, related_name='users_group', blank=True) 
-    permission = models.ManyToManyField(Permission, related_name='users')
+     
 
-    # remarquez l'absence du "champ password", c'est intégré pas besoin de preciser.
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = [] 
-    def get_full_name(self):
-    # L'utilisateur est identifié par son adresse e-mail
-        return self.username
-    def get_short_name(self):
-    # L'utilisateur est identifié par son adresse e-mail
-        return self.username
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.username
-
-            
-        
-    def has_perm(self, perm, obj=None):
-        "L'utilisateur a-t-il une autorisation spécifique ?"
-    # Réponse la plus simple possible : Oui, toujours
-        return True
-
-    def has_module_perms(self, app_label):
-        "L'utilisateur dispose-t-il des autorisations nécessaires pour voir l'application ?`app_label`?"
-    # Réponse la plus simple possible : Oui, toujours
-        return True
-        
-    @property
-    def is_staff(self):
-        "L'utilisateur est-il un membre du personnel ?"
-        return self.staff
-    @property
-    def is_admin(self):
-        "L'utilisateur est-il un membre administrateur?"
-        return self.admin
     
 class Project(models.Model):
     id = models.AutoField(primary_key=True)  
