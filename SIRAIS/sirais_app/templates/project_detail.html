@@ -10,100 +10,139 @@
             </a>
         </div>
         <div class="col-md-6 text-end" style="margin-top: 20px;">
-            <a href="{% url 'create_project' %}" class="btn btn-success">
-                <i class="bi bi-plus"></i> Voir l'évolution
-            </a>
+          
+            <p>Progression : {{ total_progression }}%</p>
+                    
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            <h3 class="mb-4">PHASES DE VALIDATION DE <strong> {{ project.name }} </strong></h3>
-            <p class="lead mb-4">Ce sont les phases que le porteur de projet est censé valider pour mener à bien son projet chez Sira Labs. Les phases incluent l'idéation, le prototypage, la validation du modèle économique, le test marché et l'entrée sur le marché.</p>
+            <span style="font-size:30px;text-align:center;" class="mb-4">Bienvenue dans le projet  <strong> <em style="color: #191974;">{{ project.name }}</em> </strong></span> <br>
+            <span style="text-decoration: underline;">Description:</span> {{ project.desc }}
+   <br> <br> Voici les phases que le porteur de projet est censé valider pour mener à bien son projet chez Sira Labs. Les phases incluent l'idéation, le prototypage, la validation du modèle économique, le test marché et l'entrée sur le marché.</p>
         </div>
     </div>
     
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-success text-white">
+            <div class="card text-white" style="background-color: #191974;">
                 <div class="card-body">
                     
                     <p style="font-size: 16px;"> IDÉATION</p>
                 </div>
                 <div class="card-footer text-white">
-                    <a href="{% url 'validate_resources' project_id=project_id phase='ideation' %}" class="btn btn-outline-light">Voir les ressources</a>
+                    <a class="small text-white stretched-link" href="{% url 'validate_resources' project_id=project_id phase='ideation' %}">Voir les ressources</a>
+
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-primary text-white">
+            <div class="card text-white" style="background-color: #191974;">
                 <div class="card-body">
                     <p style="font-size: 16px;"> PROTOTYPAGE</p>
                 </div>
                 <div class="card-footer text-white">
-                    <a href="{% url 'validate_resources' project_id=project_id phase='prototypage' %}" class="btn btn-outline-light">Voir les ressources</a>
+                    <a class="small text-white stretched-link" href="{% url 'validate_resources' project_id=project_id phase='prototypage' %}">Voir les ressources</a>
+
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-danger text-white">
+            <div class="card text-white" style="background-color: #191974;">
                  <div class="card-body">
                     <p style="font-size: 16px;"> MODELE ECONOMIQUE</p>
 
                 </div>
                 <div class="card-footer text-white">
-                    <a href="{% url 'validate_resources' project_id=project_id phase='modele_economique' %}" class="btn btn-outline-light">Voir les ressources</a>
+                    <a class="small text-white stretched-link" href="{% url 'validate_resources' project_id=project_id phase='modele_economique' %}">Voir les ressources</a>
+
                 </div>
             </div>
             
         </div>   
         <div class="col-md-3">
-            <div class="card bg-info text-white">
+            <div class="card text-white" style="background-color: #191974;">
                 <div class="card-body">
                     <p style="font-size: 16px;"> ENTREE SUR MARCHE</p>
                 </div>
                 <div class="card-footer text-white">
-                    <a href="{% url 'validate_resources' project_id=project_id phase='prototypage' %}" class="btn btn-outline-light">Voir les ressources</a>
+                    <a class="small text-white stretched-link" href="{% url 'validate_resources' project_id=project_id phase='entree_marche' %}">Voir les ressources</a>
+
                 </div>
             </div>
         </div>
      </div>
-    
-    <div class="row">
+     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h3>PROJET <strong> {{ project.name }} </strong></h3>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ project.name }}</h5>
-                    <p class="card-text">{{ project.desc }}</p>
-                    <p>Progression : {{ progress }}%</p>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar"  aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                </div>
-                <div class="card-header">
-                    <h3>Tâches du projet<strong> {{ project.name }} </strong></h3>
+                    <h3>Tâches du projet <strong>{{ project.name }}</strong></h3>
                 </div>
                 
-                    <ul>
-                    {% for task in project.tasks.all %}
-                        <li>{{ task.name }} - {{ task.status }}</li>
-                    {% empty %}
-                        <li>Aucune tâche trouvée.</li>
-                    {% endfor %}
-                    </ul>
-                    
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h4>En attente</h4>
+                            <ul class="list-group">
+                                {% for task in project.tasks.all %}
+                                    {% if task.status == 'pending' %}
+                                        <li class="list-group-item">
+                                            <i class="far fa-circle" style="color: grey;"></i>
+                                            {{ task.name }} 
+                                    </li>
+                                        
+                                    {% endif %}
+                                {% empty %}
+                                    <li class="list-group-item">Aucune tâche en attente.</li>
+                                {% endfor %}
+                                {% if user.is_authenticated %}
+                            
+                            {% endif %}
+                            </ul>
+                        </div>
+    
+                        <div class="col-md-4">
+                            <h4>En cours</h4>
+                            <ul class="list-group">
+                                {% for task in project.tasks.all %}
+                                    {% if task.status == 'in_progress' %}
+                                        <li class="list-group-item">                  
+                                            <i class="fas fa-spinner" style="color: orange;"></i>
+                                            {{ task.name }}</li>
+                                    {% endif %}
+                                {% empty %}
+                                    <li class="list-group-item">Aucune tâche en cours.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+    
+                        <div class="col-md-4">
+                            <h4>Terminé</h4>
+                            <ul class="list-group">
+                                {% for task in project.tasks.all %}
+                                    {% if task.status == 'completed' %}
+                                        <li class="list-group-item">                  
+                                            <i class="fas fa-check-circle" style="color: green;"></i>
+                                            {{ task.name }}</li>
+                                    {% endif %}
+                                {% empty %}
+                                    <li class="list-group-item">Aucune tâche terminée.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
+   
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-header">
-                    <i class="fas fa-table me-1"></i> RESSOURCES DU PROJET
+                     <h3>Ressourcess du projet <strong>{{ project.name }}</strong></h3>
                 </div>
                 <div class="card-body">
                     <table id="datatablesSimple" class="table">
@@ -142,3 +181,4 @@
 
 
 {% endblock %}
+

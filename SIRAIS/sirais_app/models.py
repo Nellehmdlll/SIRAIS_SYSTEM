@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import PermissionsMixin
 
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
@@ -79,7 +80,22 @@ class Project(models.Model):
         ('entree_marche', 'Entrée sur le marché'),
     )
     current_phase = models.CharField(max_length=20, choices=VALIDATION_PHASES, default='ideation')
+    @property
+    def is_completed(self):
+        return self.project_state == 'completed'
+    def en_cours(self):
+        return self.project_state == 'in_progress'
+    @classmethod
+    def get_completed_projects(cls):
+        return cls.objects.filter(project_state='completed')
+    @classmethod
+    def get_en_cours_projects(cls):
+        return cls.objects.filter(project_state='in_progress')
+    
 
+    @classmethod
+    def get_ongoing_projects(cls):
+        return cls.objects.exclude(project_state='completed')
 
     
     def __str__(self):
@@ -134,7 +150,7 @@ class Comment(models.Model):
 
 
 class BusinessModelCanvas(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project =models.OneToOneField(Project, on_delete=models.SET_NULL, null=True, blank=True)
     key_segment = models.TextField()
     value_proposition = models.TextField()
     channels = models.TextField()

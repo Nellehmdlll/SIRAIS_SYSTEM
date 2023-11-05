@@ -67,6 +67,11 @@ class CustomUserAdminChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
+class TaskValidationForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['status']
+
 
 
 

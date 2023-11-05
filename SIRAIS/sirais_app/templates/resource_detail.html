@@ -81,17 +81,26 @@
     .comment-content {
         margin-top: 5px;
     }
+
+    .mt-4 {
+        margin-top: 20px;
+    }
 </style>
-<!-- resource_detail.html -->
-<!-- Ajoutez cela là où vous souhaitez afficher le formulaire -->
-<a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary">
-    <i class="fas fa-arrow-left"></i> Retour
-</a>
-<h2 class="mt-4">Commentaires</h2>
+<div class="card" >
+    <main class="content-wrap" style="margin-left: 20px;">
+        <div class="col-md-6" style="margin-top: 20px; margin-right:20px;">
+            <div style="margin-top: 20px; margin-right:20px;">
+                <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary">
+                    Retour
+                </a>
+            </div>
+            
+
+            <h2 class="mt-4">Commentaires</h2>
 <form method="post" action="{% url 'resource_detail' project_id=project.id resource_id=resource.id %}">
     {% csrf_token %}
     {{ comment_form.as_p }}
-    <button type="submit" class="btn btn-primary">Commenter</button>
+    <button type="submit" class="btn text-white" style="background-color: #191974;">Commenter</button>
 </form>
 
 <h3 class="mt-4">Commentaires précédents</h3>
@@ -103,4 +112,6 @@
         </li>
     {% endfor %}
 </ul>
+</main>
+</div>
 {% endblock %}

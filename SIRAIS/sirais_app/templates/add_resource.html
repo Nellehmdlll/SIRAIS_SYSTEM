@@ -2,59 +2,52 @@
 
 {% block content %}
 
-<div class="card">
-   
-    <main class="content-wrap">
-      <div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
-        <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
-          <i class="fas fa-arrow-left"></i> Retour
-      </a>
-        <h2>Ajouter une nouvelle ressource au projet</h2>
-        
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
+<div class="card" >
+    <main class="content-wrap" style="margin-left: 20px;">
+        <div style="margin-top: 10px; margin-bottom: 10px; position: relative;">
+            <a href="javascript:void(0);" onclick="history.back();" class="btn btn-secondary" style="position: absolute; top: 0; right: 0;">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+           <strong><h2 style="color:#191974">Ajouter une ressource au projet</h2></strong> 
 
-          <div class="form-row">
-            <div class="col-md-3 mb-3">
-              <label for="{{ form.title.id_for_label }}">Titre du document</label>
-              {{ form.title }}
-            </div>
-             
-            <div class="col-md-3 mb-3">
-              <label for="{{ form.type.id_for_label }}">Type</label>
-              {{ form.type }}
-            </div>
-           
-           
-           </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.title.id_for_label }}">Titre du document</label>
+                        {{ form.title }}
+                    </div>
 
-          <div class="form-row">
-           
-            <div class="col-md-3 mb-3">
-              <label for="{{ form.file.id_for_label }}">Fichier</label>
-              {{ form.file }}
-            </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.type.id_for_label }}">Type</label>
+                        {{ form.type }}
+                    </div>
+                </div>
 
-            <div class="col-md-3 mb-3">
-              <label for="{{ form.link.id_for_label }}">Lien </label>
-              {{ form.link }}
-            </div>
-          </div>
-        
-          <div class="form-row">
-            <div class="form-group">
-                <label for="{{ form.desc.id_for_label }}" id="id_desc">Description</label>
-                {{ form.desc }}
-              </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.file.id_for_label }}">Fichier</label>
+                        {{ form.file }}
+                    </div>
 
-              
-              
-          </div>
-          <button type="submit" class="btn btn-primary">Ajouter une ressource</button>   
-         </form>
-      </main>
+                    <div class="col-md-6">
+                        <label for="{{ form.link.id_for_label }}">Lien </label>
+                        {{ form.link }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="{{ form.desc.id_for_label }}" id="id_desc">Description</label>
+                        {{ form.desc }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn text-white" style="background-color: #191974;">Ajouter une ressource</button>
+            </form>
+        </div>
+    </main>
 </div>
-  
 
 {% endblock %}

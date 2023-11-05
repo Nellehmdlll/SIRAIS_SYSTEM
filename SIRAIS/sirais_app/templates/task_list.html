@@ -7,7 +7,7 @@
     cursor: pointer;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #ff3131;
+    border: 1px solid grey;
     border-radius: 5px;
     background-color: #fff;
     transition: background-color 0.3s ease;
@@ -16,7 +16,7 @@
     cursor: pointer;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #191974;
+    border: 1px solid orange;
     border-radius: 5px;
     background-color: #fff;
     transition: background-color 0.3s ease;
@@ -44,33 +44,24 @@
 
 
 <section class="vh-100 gradient-custom" >
-  
   <div class="container py-5 h-100">
-    
     <div class="row d-flex justify-content-center align-items-center h-100">
-
       <div class="col col-xl-10">
-
+        <h2 style="text-align: center;">La liste des tâches</h2>
         <div class="card">
-
           <div class="card-body p-5">
-            <a href="{% url 'create_task' project.id %}"  class="btn btn-primary"><i class="bi bi-plus"></i> Ajouter une tâche</a>
-
-
-
-            
+            <a href="{% url 'create_task' project.id %}"  class="btn text-white" style="background-color: #339900;" ><i class="bi bi-plus"></i> Ajouter une tâche</a>
             <div >
-           
           <div >
             <div class="column">
               <h4>Tâches à Faire</h4>
               {% for task in pending_tasks %}
-                <div class="task_faire" >
-                   
-                  
-                  {{ task.name }}
+                <div class="task_faire"  >
+                  <i class="far fa-circle" style="color: grey;"></i>
+
+                  <a href="{% url 'task_detail' task.id project.id %}"> {{ task.name }}</a>
                 
-                 
+                
                 </div>
               {% endfor %}
             </div>
@@ -79,8 +70,9 @@
               <h4>Tâches en Cours</h4>
               {% for task in ongoing_tasks %}
                 <div class="task_cours" onclick="handleTaskClick('{{ task.id }}')">
+                  <i class="fas fa-spinner" style="color: orange;"></i>
+                 <a href="{% url 'task_detail' task.id project.id %}">{{ task.name }}</a> 
                   
-                  {{ task.name }}
                 </div>
               {% endfor %}
             </div>
@@ -89,8 +81,8 @@
               <h4>Tâches Terminées</h4>
               {% for task in completed_tasks %}
                 <div class="task_fin" onclick="handleTaskClick('{{ task.id }}')">
-                   
-                  {{ task.name }}
+                  <i class="fas fa-check-circle" style="color: green;"></i>
+                  <a href="{% url 'task_detail' task.id project.id %}">{{ task.name }}</a>
                 </div>
               {% endfor %}
             </div>

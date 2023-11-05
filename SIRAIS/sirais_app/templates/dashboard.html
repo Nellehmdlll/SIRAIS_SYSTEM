@@ -10,45 +10,25 @@
                 <li class="breadcrumb-item active">DONNEES</li>
             </ol>
             <div class="row">
-                <div class="col-xl-3 col-md-6">
-                    <div class="card bg-primary text-white mb-4">
-                        <div class="card-body">
-                            <H1>{{ progression }} </H1> <p style="font-size: 16px;"> INCUBéS</p>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-                            <a class="small text-white stretched-link" href="{% url 'liste' 'project_owners' %}">Voir la liste</a>
-                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="card bg-warning text-white mb-4">
-                        <div class="card-body"><H1>{{ total_coachs }} </H1> <p style="font-size: 16px;"> COACHS</p>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-                            <a class="small text-white stretched-link" href="{% url 'liste' 'coachs' %}">Voir la liste</a>
-                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="card bg-success text-white mb-4">
-                        <div class="card-body"><H1>{{ total_mentors }}  </H1> <p style="font-size: 16px;"> MENTORS</p>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-                            <a class="small text-white stretched-link" href="{% url 'liste' 'mentors' %}">Voir la liste</a>
-                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                        </div>
-                    </div>
-                </div>
                 
-            </div>
+                    <div class="card text-white" style="background-color: #191974;">
+                        <div class="card-body">
+                            <H1>Pourcentage d'évolution </H1> <p style="font-size: 16px;"> {{ total_progression }}</p>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                        </div>
+                    </div>
+                
+                
+               
+                
+            </div> <br>
             <div class="row">
                 <div class="col-xl-6">
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-chart-area me-1"></i>
-                            Area Chart Example
+                            Diagramme
                         </div>
                         <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
                     </div>
@@ -57,7 +37,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-chart-bar me-1"></i>
-                            Bar Chart Example
+                            Diagramme
                         </div>
                         <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
                     </div>

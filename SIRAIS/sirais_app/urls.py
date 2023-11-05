@@ -28,6 +28,8 @@ urlpatterns = [
     path('tasks/<int:id>', views.task_list, name='task_list'),
     path('create_task/<int:project_id>/', views.create_task, name='create_task'),
     path('project/<int:project_id>/task/<int:task_id>/', views.task_detail, name='task_detail'),
+    path('task_detail/<int:task_id>/<int:project_id>/', views.task_detail, name='task_detail'),
+
  
 
 

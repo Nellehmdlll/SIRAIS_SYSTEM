@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <h2>Validation de la tâche "{{ task.name }}"</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Valider la tâche</button>
+  </form>
+  <a href="{% url 'task_detail' task_id=task.id %}">Retour à la tâche</a>
+{% endblock %}

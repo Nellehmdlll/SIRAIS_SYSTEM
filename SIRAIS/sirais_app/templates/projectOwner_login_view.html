@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +8,16 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f3f3f3;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            width: 150px; /* Ajustez la taille du logo selon vos besoins */
+            border-radius: 50%;
         }
 
         .container {
@@ -41,7 +52,7 @@
         .container input[type="submit"] {
             width: 100%;
             padding: 10px;
-            background-color: #007bff;
+            background-color: #191974;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -65,6 +76,9 @@
     </style>
 </head>
 <body>
+    <div class="logo-container">
+        <img src="{% static './image/logo-SIRALABS-cor.png' %}" alt="Sira Labs Logo">
+    </div>
     <div class="container">
         <h1>Connexion</h1>
         {% if error_message %}
@@ -76,7 +90,7 @@
             <input type="text" name="username" id="id_username" required>
             <label for="id_password">Entrer votre mot de passe :</label>
             <input type="password" name="password" id="id_password" required>
-            <input type="submit" value="Se connecter">
+            <input type="submit" style="background-color: #191974;" value="Se connecter">
             {% csrf_token %}
 
         </form>

@@ -1,0 +1,28 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  
+ 
+<div style="margin-left: 20px;margin-top: 20px;">
+    <h2>Détails de la tâche "{{ task.name }}"</h2>
+    <p><strong>Description :</strong> {{ task.description }}</p>
+    <p><strong>Status :</strong> {{ task.status }}</p>
+  <form method="post" action="{% url 'task_detail' task_id=task.id project_id=project.id %}">
+    {% csrf_token %}
+    <label for="status">Modifier le statut :</label>
+    <select name="status" id="status">
+      <option value="completed" {% if task.status == 'completed' %}selected{% endif %}>Terminée</option>
+      <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>En cours</option>
+      <option value="pending" {% if task.status == 'pending' %}selected{% endif %}>En cours</option>
+    </select>
+    <br> <br>
+    <button type="submit" class="btn text-white" style="background-color: #339900;" >Enregistrer</button>
+  </form>
+
+  <p>
+    <a href="{% url 'task_list' project.id %}"> Liste des tâches</a>
+  </p>
+</div>
+
+
+{% endblock %}

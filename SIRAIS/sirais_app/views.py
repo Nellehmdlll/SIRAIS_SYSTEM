@@ -1,9 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views import View
 from .models import *
-from .forms import ProjectForm , ResourceForm ,BusinessModelCanvasForm,TaskForm,CommentForm
-from django.shortcuts import get_object_or_404, redirect
+from .forms import ProjectForm , ResourceForm ,BusinessModelCanvasForm,TaskForm,CommentForm,TaskValidationForm
 from django.urls import reverse
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
@@ -23,27 +22,25 @@ class DashboardView(View):
 
 
     def get(self, request,project_id):
-        # Nombre total de projets
         project = get_object_or_404(Project, id=project_id)
-
         total_projects = Project.objects.count()
-
-        # Nombre total de membres dans le projet
         total_members = CustomUser.objects.filter(project__isnull=False).count()
-
-        # Nombre total de coachs, porteurs de projet et mentors
         total_coachs = CustomUser.objects.filter(groups__name='Coach').count()
         total_porteurs = CustomUser.objects.filter(groups__name='Porteur de projet').count()
         total_mentors = CustomUser.objects.filter(groups__name='Mentor').count()
 
-        # Calcul de la progression sur les projets (exemple avec des tâches)
-        total_tasks = Task.objects.count()
-        completed_tasks = Task.objects.filter(status='completed').count()
+        total_tasks = Task.objects.filter(project=project).count()
+        completed_tasks = Task.objects.filter(project=project, status='completed').count()
 
-        if total_tasks > 0:
-            progression = (completed_tasks / total_tasks) * 100
+        total_resources = Resource.objects.filter(project=project).count()
+        validated_resources = Resource.objects.filter(project=project, validated=True).count()
+
+        if total_tasks + total_resources > 0:
+            task_progression = (completed_tasks / total_tasks) * 100
+            resource_progression = (validated_resources / total_resources) * 100
+            total_progression = (task_progression + resource_progression) / 2
         else:
-            progression = 0
+            total_progression = 0
 
         context = {
             'total_projects': total_projects,
@@ -51,7 +48,13 @@ class DashboardView(View):
             'total_coachs': total_coachs,
             'total_porteurs': total_porteurs,
             'total_mentors': total_mentors,
-            'progression': progression,
+            'total_tasks': total_tasks,
+            'completed_tasks': completed_tasks,
+            'total_resources': total_resources,
+            'validated_resources': validated_resources,
+            'task_progression': task_progression,
+            'resource_progression': resource_progression,
+            'total_progression': total_progression,
             'project':project,
         }
 
@@ -75,7 +78,7 @@ def signin(request):
 
 def signout(request):
     logout(request)
-    return redirect('signin')  # Redirigez vers la page de connexion
+    return redirect('signin')  
 
 
 def signup(request):
@@ -146,8 +149,16 @@ class ListView(View):
 class ProjectListView(View):
     def get(self, request):
         projects = Project.objects.all()
+        nombre_projets = Project.objects.count()
+        completed_count = Project.get_completed_projects().count()
+        en_cours_count=Project.get_en_cours_projects().count()
+        
+
         context = {
             'projects': projects,
+            'nombre_projets':nombre_projets,
+            'completed_count':completed_count,
+            'en_cours_count':en_cours_count,
         }
         return render(request, 'project_list.html', context)
 
@@ -239,6 +250,7 @@ def create_business_model(request, project_id):
         form = BusinessModelCanvasForm()
 
     return render(request, 'business_model.html', {'form': form, 'project': project})
+
 def select_active_project(request, project_id):
     try:
         active_project = Project.objects.get(id=project_id)
@@ -257,8 +269,18 @@ class ProjectDetailView(View):
         validated_resources = resources.filter(validated=True).count()
         progress = (validated_resources / total_resources) * 100 if total_resources > 0 else 0
 
-        # Appel de la vue select_active_project pour définir le projet actif
-        select_active_project(request, project_id)
+        total_tasks = Task.objects.filter(project=project).count()
+        completed_tasks = Task.objects.filter(project=project, status='completed').count()
+
+        total_resources = Resource.objects.filter(project=project).count()
+        validated_resources = Resource.objects.filter(project=project, validated=True).count()
+
+        if total_tasks + total_resources > 0:
+            task_progression = (completed_tasks / total_tasks) * 100
+            resource_progression = (validated_resources / total_resources) * 100
+            total_progression = (task_progression + resource_progression) / 2
+        else:
+            total_progression = 0
         
         activ_project = active_project(request)
         context = {
@@ -268,6 +290,14 @@ class ProjectDetailView(View):
             'project_id': project_id,  
             'phase': project.current_phase,
             'active_project':activ_project,
+            'total_tasks': total_tasks,
+            'completed_tasks': completed_tasks,
+            'total_resources': total_resources,
+            'validated_resources': validated_resources,
+            'task_progression': task_progression,
+            'resource_progression': resource_progression,
+            'total_progression': total_progression,
+            'project':project,
             
                    }
 
@@ -341,20 +371,6 @@ def validate_resource(request, resource_id):
     }
     return render(request, 'validate_resource.html', context)
 
-# def create_task(request,id):
-#     current_project_id = request.session.get('current_project_id')
-#     project = get_object_or_404(Project, id=id)
-#     if request.method == 'POST':
-#         form = TaskForm(request.POST)
-#         if form.is_valid():
-#             task = form.save(commit=False)
-#             task.project_id = current_project_id
-#             task.save()
-#             return redirect('task_list')
-#     else:
-#         form = TaskForm(initial={'project': current_project_id})
-
-#     return render(request, 'create_task.html', {'form': form},{'project':project},{'id':id})
 
 def create_task(request, project_id):
     project = Project.objects.get(id=project_id)
@@ -388,9 +404,33 @@ def task_list(request,id):
     return render(request, 'task_list.html', context)
 
 
-def task_detail(request, project_id, task_id):
+def validate_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    return render(request, 'task_detail.html', {'task': task})
+
+    if request.method == 'POST':
+        form = TaskValidationForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('task_detail', task_id=task.id)  # Rediriger vers la page détail de la tâche
+    else:
+        form = TaskValidationForm(instance=task)
+
+    return render(request, 'validate_task.html', {'form': form, 'task': task})
+
+
+
+def task_detail(request,task_id,project_id):
+    task = get_object_or_404(Task, id=task_id)
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == 'POST':
+        form = TaskValidationForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('task_detail', task_id=task.id,project_id=project.id)
+    else:
+        form = TaskValidationForm(instance=task)
+
+    return render(request, 'task_detail.html', {'task': task,'project': project})
 
 
 

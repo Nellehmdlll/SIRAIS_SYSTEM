@@ -11,12 +11,12 @@
      
     </div>
     <div class="d-flex justify-content-between mb-4">
-        <a href="{% url 'add_resource' phase=phase project_id=project_id %}" class="btn btn-warning">Ajouter une ressource de plus</a>
+        <a href="{% url 'add_resource' phase=phase project_id=project_id %}" class="btn text-white " style="background-color: #339900;">Ajouter une ressource de plus</a>
     </div>
 
     <div class="card mb-4">
         <div class="card-header">
-            <i class="fas fa-table me-1"></i> Liste des ressources en attente de validation
+            <i class="fas fa-table me-1"></i> Liste des ressources
         </div>
         <div class="card-body">
             <table class="table table-striped">
@@ -48,7 +48,7 @@
                             {% if user.is_authenticated %}
                             <form method="post" action="{% url 'validate_resource' resource_id=resource.id %}">
                                 {% csrf_token %}
-                                <button type="submit" name="action" class="btn btn-outline-success btn-sm" value="validate">Valider</button>
+                                <button type="submit" name="action" class="btn btn-outline-success btn-sm"  value="validate">Valider</button>
                                 <button type="submit" name="action" class="btn btn-outline-danger btn-sm" value="reject">Rejeter</button>
                             </form>
                             {% endif %}

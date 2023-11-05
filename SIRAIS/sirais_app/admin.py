@@ -16,9 +16,37 @@ class CustomUserAdmin(BaseUserAdmin):
         return ', '.join([group.name for group in obj.groups.all()])
     
     get_groups_display.short_description = _('Groups')
+    
+class ProjectAdmin(admin.ModelAdmin):
+       list_display = ('name', 'project_state', 'start_date','coach','porteur_de_projet')
+       search_fields = ('name',)
+       list_filter = ('project_state',)
+       ordering = ('-start_date',)
 
+class TaskAdmin(admin.ModelAdmin):
+       list_display = ('name', 'deadline', 'status')
+       search_fields = ('name',)
+       list_filter = ('status',)
+       ordering = ('name',)
+       
+class RessourceAdmin(admin.ModelAdmin):
+       list_display = ('title', 'project', 'validated')
+       search_fields = ('title',)
+       list_filter = ('validated',)
+       ordering = ('title',)
+
+class BMCAdmin(admin.ModelAdmin):
+       list_display = ('key_segment','value_proposition','channels','customer_relation','money_source','key_resource','key_activities','key_partners','money_structure')
+       
+class CommentAdmin(admin.ModelAdmin):
+       list_display = ('author', 'content', 'date','resource')
+       search_fields = ('author',)
+       list_filter = ('author',)
+       ordering = ('author',)     
+         
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Project)
-admin.site.register(Task)
-admin.site.register(Resource)
-admin.site.register(Comment)
+admin.site.register(Project, ProjectAdmin)
+admin.site.register(Task, TaskAdmin)
+admin.site.register(Resource,RessourceAdmin)
+admin.site.register(Comment,CommentAdmin)
+admin.site.register(BusinessModelCanvas,BMCAdmin)
