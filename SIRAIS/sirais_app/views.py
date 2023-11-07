@@ -33,8 +33,8 @@ class DashboardView(View):
 
 
         total_resources = Resource.objects.filter(project=project).count()
+        validated_resources = Resource.objects.filter(project=project, validated=True).count()
         progress = (validated_resources / total_resources) * 100 if total_resources > 0 else 0
-
         validated_resources = Resource.objects.filter(project=project, validated=True).count()
 
         task_progression = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
