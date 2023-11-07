@@ -10,57 +10,59 @@
         <form method="post" class="needs-validation" novalidate action="{% url 'business_model' project.id %}">
           {% csrf_token %}
           <div class="mb-3" >
-<strong>Segment client:</strong>            {{ form.key_segment }}
+<strong>Segment client:</strong>            
+{{ form.segment_client }}
             <div class="invalid-feedback">
-              {{ form.key_segment.errors }}
+              {{ form.segment_client.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Proposition de valeur:</strong>                        {{ form.value_proposition }}
+            <strong>Proposition de valeur:</strong>                        
+            {{ form.proposition_de_valeur }}
             <div class="invalid-feedback">
-              {{ form.value_proposition.errors }}
+              {{ form.proposition_de_valeur.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Canaux de distribution:</strong>                        {{ form.channels }}
+            <strong>Canaux de distribution:</strong>                        {{ form.cannaux_de_distribution }}
             <div class="invalid-feedback">
-              {{ form.channels.errors }}
+              {{ form.cannaux_de_distribution.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Relation client:</strong>                        {{ form.customer_relation }}
+            <strong>Relation client:</strong>                        {{ form.relation_client }}
             <div class="invalid-feedback">
-              {{ form.customer_relation.errors }}
+              {{ form.relation_client.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Source de revenus:</strong>                        {{ form.money_source }}
+            <strong>Source de revenus:</strong>                        {{ form.source_de_revenus }}
             <div class="invalid-feedback">
-              {{ form.money_source.errors }}
+              {{ form.source_de_revenus.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Ressources clés:</strong>                        {{ form.key_resource }}
+            <strong>Ressources clés:</strong>                        {{ form.ressources_cles }}
             <div class="invalid-feedback">
-              {{ form.key_resource.errors }}
+              {{ form.ressources_cles.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Activités clés:</strong>                        {{ form.key_activities }}
+            <strong>Activités clés:</strong>                        {{ form.activites_cles }}
             <div class="invalid-feedback">
-              {{ form.key_activities.errors }}
+              {{ form.activites_cles.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Partenaires clés:</strong>                        {{ form.key_partners }}
+            <strong>Partenaires clés:</strong>                        {{ form.partenaires_cles }}
             <div class="invalid-feedback">
-              {{ form.key_partners.errors }}
+              {{ form.partenaires_cles.errors }}
             </div>
           </div>
           <div class="mb-3">
-            <strong>Structure des couts:</strong>                        {{ form.money_structure }}
+            <strong>Structure des couts:</strong>                        {{ form.structure_des_couts }}
             <div class="invalid-feedback">
-              {{ form.money_structure.errors }}
+              {{ form.structure_des_couts.errors }}
             </div>
           </div>          <button type="submit" class="btn btn-primary">Enregistrer</button>
         </form>
@@ -71,57 +73,57 @@
         <h2 class="text-center">Mes informations </h2>
         <div class="card mb-3">
           <div class="card-body">
-            <P> <strong> Segment client:</strong> {{ project.businessmodelcanvas.key_segment }} </P> 
+            <P> <strong> Segment client:</strong> {{ project.businessmodelcanvas.segment_client }} </P> 
                
           </div>
         </div>
 
         <div class="card mb-3">
           <div class="card-body">
-           <p><strong> Proposition de valeur ajoutée:  </strong>{{ project.businessmodelcanvas.value_proposition }}</p>    
+           <p><strong> Proposition de valeur ajoutée:  </strong>{{ project.businessmodelcanvas.proposition_de_valeur }}</p>    
 
           </div>
         </div>
         <div class="card mb-3">
           <div class="card-body">
-           <p><strong> Canaux de distributions:</strong>{{ project.businessmodelcanvas.channels }} </p>    
+           <p><strong> Canaux de distributions:</strong>{{ project.businessmodelcanvas.cannaux_de_distribution }} </p>    
 
           </div>
         </div>
         <div class="card mb-3">
           <div class="card-body">
-           <p><strong>Relation client:</strong>{{ project.businessmodelcanvas.customer_relation }} </p>    
+           <p><strong>Relation client:</strong>{{ project.businessmodelcanvas.relation_client }} </p>    
 
           </div>
         </div>
         <div class="card mb-3">
           <div class="card-body">
-            <p><strong>Sources de revenus:</strong>{{ project.businessmodelcanvas.money_source }}    
+            <p><strong>Sources de revenus:</strong>{{ project.businessmodelcanvas.source_de_revenus }}    
             </p>
           </div>
         </div>
         <div class="card mb-3">
           <div class="card-body">
-           <p> <strong>Ressources clés:</strong>{{ project.businessmodelcanvas.key_resource }}    </p> 
+           <p> <strong>Ressources clés:</strong>{{ project.businessmodelcanvas.resource_cles }}    </p> 
 
           </div>
         </div>
 
         <div class="card mb-3">
           <div class="card-body">
-            <p><strong>Activités clés:</strong>{{ project.businessmodelcanvas.key_activities }}    </p>
+            <p><strong>Activités clés:</strong>{{ project.businessmodelcanvas.activites_cles }}    </p>
 
           </div>
         </div>
         <div class="card mb-3">
           <div class="card-body">
-            <p><strong>Partenaires clés:</strong>{{ project.businessmodelcanvas.key_partners }}    </p>
+            <p><strong>Partenaires clés:</strong>{{ project.businessmodelcanvas.partenaires_cles }}    </p>
 
           </div>
         </div>
         <div class="card mb-3">
           <div class="card-body">
-          <p><strong>Structure des couts:</strong>{{ project.businessmodelcanvas.money_structure }}    
+          <p><strong>Structure des couts:</strong>{{ project.businessmodelcanvas.structure_des_couts }}    
           </p>  
           </div>
         </div>

@@ -178,28 +178,10 @@ class ProjectForm(forms.ModelForm):
         }
 
 
-
-# class ProjectForm(forms.ModelForm):
-#     class Meta:
-#         model = Project
-#         fields = ['name', 'desc' ,'start_date','end_date','state_date','porteur_de_projet','coach','project_state']
-#         widgets = {
-#             'name': forms.TextInput(attrs={'class': 'form-control'}),
-#             'desc': forms.Textarea(attrs={'class': 'form-control'}),
-#             'start_date': forms.DateTimeInput(attrs={'class': 'form-control'}),
-#             'end_date': forms.DateTimeInput(attrs={'class': 'form-control'}),
-#             'porteur_de_projet': forms.Select(attrs={'class': 'form-control'}),
-#             'coach': forms.Select(attrs={'class': 'form-control'}),
-#             'project_state': forms.Select(attrs={'class': 'form-control'}),
-#             'is_active' : forms.BooleanField(attrs={'class' : 'form-control' })
-#         }
-
-
-
 class ResourceForm(forms.ModelForm):
     class Meta:
         model = Resource
-        fields = ['type', 'file', 'link', 'title' , 'desc', ]
+        fields = ['file', 'link', 'title' , 'desc', ]
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
     
             

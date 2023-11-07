@@ -1,0 +1,14 @@
+/* custom_admin.css */
+
+/* Réduire la taille du logo dans l'interface d'administration */
+#header {
+    height: 60px;
+}
+
+#header .brand h1 {
+    font-size: 1.5rem; /* Taille du texte du logo */
+}
+
+#header .brand img {
+    max-height: 40px; /* Taille maximale du logo */
+}

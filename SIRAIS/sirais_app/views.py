@@ -28,12 +28,18 @@ class DashboardView(View):
         total_coachs = CustomUser.objects.filter(groups__name='Coach').count()
         total_porteurs = CustomUser.objects.filter(groups__name='Porteur de projet').count()
         total_mentors = CustomUser.objects.filter(groups__name='Mentor').count()
-
         total_tasks = Task.objects.filter(project=project).count()
         completed_tasks = Task.objects.filter(project=project, status='completed').count()
 
+
         total_resources = Resource.objects.filter(project=project).count()
+        progress = (validated_resources / total_resources) * 100 if total_resources > 0 else 0
+
         validated_resources = Resource.objects.filter(project=project, validated=True).count()
+
+        task_progression = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+        resource_progression = (validated_resources / total_resources) * 100 if total_resources > 0 else 0
+        total_progression = (task_progression + resource_progression) / 2 if total_tasks + total_resources > 0 else 0
 
         if total_tasks + total_resources > 0:
             task_progression = (completed_tasks / total_tasks) * 100
@@ -41,7 +47,8 @@ class DashboardView(View):
             total_progression = (task_progression + resource_progression) / 2
         else:
             total_progression = 0
-
+       
+        
         context = {
             'total_projects': total_projects,
             'total_members': total_members,
@@ -56,6 +63,7 @@ class DashboardView(View):
             'resource_progression': resource_progression,
             'total_progression': total_progression,
             'project':project,
+            'progress':progress,
         }
 
         return render(request, self.template_name, context)
@@ -192,19 +200,20 @@ class CreateProjectView(View):
 class EditProjectView(View):
     template_name = 'edit_project.html'
 
-    def get(self, request,id):
+    def get(self, request, id):
         project = get_object_or_404(Project, id=id)
-        form = ProjectForm()
-        return render(request, 'edit_project.html', {'form': form,'project':project})
+        form = ProjectForm(instance=project)
+        return render(request, 'edit_project.html', {'form': form, 'project': project})
 
-    def post(self, request,id):
-        form = ProjectForm(request.POST)
+    def post(self, request, id):
         project = get_object_or_404(Project, id=id)
+        form = ProjectForm(request.POST, instance=project)
 
         if form.is_valid():
             form.save()
             return redirect('project_liste')
-        return render(request, 'project_list.html', {'form': form,'project':project})
+
+        return render(request, 'edit_project.html', {'form': form, 'project': project})
     
 class DeleteProjectView(View):
     def get(self, request, id):
@@ -272,16 +281,11 @@ class ProjectDetailView(View):
         total_tasks = Task.objects.filter(project=project).count()
         completed_tasks = Task.objects.filter(project=project, status='completed').count()
 
-        total_resources = Resource.objects.filter(project=project).count()
-        validated_resources = Resource.objects.filter(project=project, validated=True).count()
+        # Vérification pour éviter la division par zéro
+        task_progression = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+        resource_progression = (validated_resources / total_resources) * 100 if total_resources > 0 else 0
+        total_progression = (task_progression + resource_progression) / 2 if total_tasks + total_resources > 0 else 0
 
-        if total_tasks + total_resources > 0:
-            task_progression = (completed_tasks / total_tasks) * 100
-            resource_progression = (validated_resources / total_resources) * 100
-            total_progression = (task_progression + resource_progression) / 2
-        else:
-            total_progression = 0
-        
         activ_project = active_project(request)
         context = {
             'project': project,
@@ -298,8 +302,7 @@ class ProjectDetailView(View):
             'resource_progression': resource_progression,
             'total_progression': total_progression,
             'project':project,
-            
-                   }
+        }
 
         return render(request, 'project_detail.html', context)
 

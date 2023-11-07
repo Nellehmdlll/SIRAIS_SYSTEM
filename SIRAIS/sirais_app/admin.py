@@ -36,7 +36,7 @@ class RessourceAdmin(admin.ModelAdmin):
        ordering = ('title',)
 
 class BMCAdmin(admin.ModelAdmin):
-       list_display = ('key_segment','value_proposition','channels','customer_relation','money_source','key_resource','key_activities','key_partners','money_structure')
+       list_display = ('segment_client','proposition_de_valeur','cannaux_de_distribution','relation_client','source_de_revenus','ressources_cles','activites_cles','partenaires_cles','structure_des_couts')
        
 class CommentAdmin(admin.ModelAdmin):
        list_display = ('author', 'content', 'date','resource')

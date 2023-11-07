@@ -53,6 +53,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    class Meta:
+        verbose_name = "Utilisateur"
     
 class Project(models.Model):
     id = models.AutoField(primary_key=True)  
@@ -100,6 +102,8 @@ class Project(models.Model):
     
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = "Projet"
 
 
 class Resource(models.Model):
@@ -138,6 +142,8 @@ class Resource(models.Model):
 
     def __str__(self):
         return f"Resource {self.id} - {self.project.name}"
+    class Meta:
+        verbose_name = "Ressource"
 
 class Comment(models.Model):
     content = models.TextField()
@@ -147,22 +153,26 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.author} - {self.date}"
+    class Meta:
+        verbose_name = "Commentaire"
 
 
 class BusinessModelCanvas(models.Model):
     project =models.OneToOneField(Project, on_delete=models.SET_NULL, null=True, blank=True)
-    key_segment = models.TextField()
-    value_proposition = models.TextField()
-    channels = models.TextField()
-    customer_relation = models.TextField()
-    money_source = models.TextField()
-    key_resource =models.TextField()
-    key_activities = models.TextField()
-    key_partners=models.TextField()
-    money_structure =models.TextField()
+    segment_client = models.TextField()
+    proposition_de_valeur = models.TextField()
+    cannaux_de_distribution = models.TextField()
+    relation_client = models.TextField()
+    source_de_revenus = models.TextField()
+    ressources_cles =models.TextField()
+    activites_cles = models.TextField()
+    partenaires_cles =models.TextField()
+    structure_des_couts =models.TextField()
 
     def __str__(self):
         return f"Business Model Canvas for {self.project.name}"
+    class Meta:
+        verbose_name = "Business Model Canva"
 
   
 class Task(models.Model):
@@ -182,3 +192,7 @@ class Task(models.Model):
     
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = "Tâche"
+        
+    
